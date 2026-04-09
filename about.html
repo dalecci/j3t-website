@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About J3T Management -- Owner-First Private Aviation | Florida</title>
+<meta name="description" content="J3T Management is an independent aviation consulting firm built for Part 91 owners who want transparent, efficient aircraft management with zero vendor markups. Based in Florida.">
+<meta name="keywords" content="J3T Management about, Part 91 aviation consultant Florida, aircraft management no markup, independent aviation advisor">
+<meta property="og:title" content="About J3T Management">
+<meta property="og:description" content="Owner-first Part 91 aircraft management. Zero markups. One contact. Built on trust.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0F0F0F;--charcoal:#1C1C1C;--warm-white:#F7F5F0;--cream:#EDE9E0;--mist:#D8D4CB;--stone:#9A9488;--gold:#A08450;--gold-light:#C8A96A;--gold-pale:#EAD9B8;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Montserrat',sans-serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:20px;}
+body{font-family:var(--sans);background:var(--warm-white);color:var(--ink);overflow-x:hidden;cursor:none;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .25s,height .25s;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 60px;height:72px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,15,15,.97);border-bottom:1px solid rgba(160,132,80,.2);}
+.nav-logo{font-family:var(--sans);font-size:19px;font-weight:600;letter-spacing:4px;color:var(--warm-white);text-decoration:none;cursor:none;}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;gap:48px;list-style:none;}
+.nav-links a{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(247,245,240,.7);text-decoration:none;transition:color .2s;cursor:none;}
+.nav-links a:hover{color:var(--gold-light);}
+.nav-links a.active{color:var(--gold);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--warm-white);transition:all .3s;}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.page-hero{min-height:50vh;background:var(--charcoal);display:flex;align-items:flex-end;padding:0 60px 80px;padding-top:72px;position:relative;overflow:hidden;}
+.page-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(160,132,80,.4),transparent);}
+.page-title{font-family:var(--serif);font-size:clamp(52px,8vw,105px);font-weight:300;color:var(--warm-white);line-height:.95;max-width:800px;}
+.page-title em{color:var(--gold);font-style:italic;}
+.thesis-block{background:var(--warm-white);padding:100px 60px 80px;border-bottom:1px solid var(--mist);}
+.thesis-inner{max-width:900px;margin:0 auto;text-align:center;}
+.section-label{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;padding:100px 60px;max-width:1200px;margin:0 auto;}
+.about-text p{font-family:var(--serif);font-size:23px;line-height:1.85;color:#4A4A48;margin-bottom:24px;}
+.about-stats{display:flex;flex-direction:column;gap:48px;padding-top:8px;}
+.stat-item{border-left:1px solid var(--gold);padding-left:28px;}
+.stat-value{font-family:var(--serif);font-size:60px;font-weight:300;color:var(--charcoal);line-height:1;margin-bottom:8px;}
+.stat-label{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--stone);}
+.quote-block{background:var(--cream);padding:100px 60px;text-align:center;}
+.quote-mark{font-family:var(--serif);font-size:100px;color:var(--gold-pale);line-height:.5;margin-bottom:32px;display:block;}
+.quote-text{font-family:var(--serif);font-size:clamp(26px,3vw,40px);font-weight:300;font-style:italic;color:var(--charcoal);line-height:1.5;max-width:780px;margin:0 auto 36px;}
+.quote-rule{width:48px;height:1px;background:var(--gold);margin:0 auto;}
+footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(160,132,80,.15);}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:var(--sans);font-size:16px;font-weight:600;letter-spacing:4px;color:var(--warm-white);}
+.footer-logo span{color:var(--gold);}
+.footer-tagline{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--stone);}
+.footer-note{font-family:var(--sans);font-size:11px;letter-spacing:2px;color:rgba(154,148,136,.5);text-transform:uppercase;}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+.reveal.visible{opacity:1;transform:none;}
+@media(max-width:768px){
+  nav{padding:0 24px;}
+  .nav-links{display:none;}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:72px;left:0;right:0;background:rgba(15,15,15,.98);padding:32px 24px 40px;gap:28px;border-bottom:1px solid rgba(160,132,80,.2);z-index:99;}
+  .hamburger{display:flex;}
+  .page-hero{padding:72px 24px 60px;}
+  .thesis-block{padding:60px 24px 60px;}
+  .about-grid{grid-template-columns:1fr;gap:48px;padding:60px 24px;}
+  .quote-block{padding:60px 24px;}
+  .footer-inner{flex-direction:column;gap:20px;text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<nav id="nav">
+  <a href="index.html" class="nav-logo">J3<span>T</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <h1 class="page-title">Owner&#8209;first.<br><em>Always.</em></h1>
+</div>
+
+<div class="thesis-block">
+  <div class="thesis-inner reveal">
+    <p class="section-label">Our Foundation</p>
+    <h2 style="font-family:var(--serif);font-size:clamp(30px,4vw,52px);font-weight:300;color:var(--charcoal);line-height:1.15;margin-bottom:36px;">Management built for <em style="color:var(--gold);font-style:italic;">the owner,</em><br>not the operator.</h2>
+    <div style="width:48px;height:1px;background:var(--gold);margin:0 auto 40px;"></div>
+    <p style="font-family:var(--serif);font-size:clamp(20px,2.2vw,26px);font-weight:300;line-height:1.85;color:#4A4A48;max-width:720px;margin:0 auto;">J3T was founded on a simple premise: aircraft ownership should be transparent, efficient, and personal. We serve a select group of Part 91 owners who want expert oversight without the overhead -- and without the conflict of interest -- that defines most large management companies.</p>
+  </div>
+</div>
+
+<div class="about-grid">
+  <div class="about-text reveal">
+    <p class="section-label">Our Position</p>
+    <p>Most management companies make money on the spread. They mark up fuel, maintenance, and services -- and the owner rarely knows. Their incentive is not to minimize your cost. It is to maximize their margin.</p>
+    <p>J3T was built on the opposite model. We are compensated by you directly. We do not take commissions from vendors. We do not mark up parts, fuel, or services. When your invoice arrives, it reflects what was actually charged.</p>
+    <p>We work exclusively with Part 91 operators. No charter. No conflict. Every recommendation we make, every vendor we engage, every dollar we spend is made with one client in mind.</p>
+    <p>The name J3T carries a personal meaning -- three sons, one purpose. The business exists because ownership should be simpler, more transparent, and far less expensive than the industry has made it.</p>
+  </div>
+  <div class="about-stats reveal">
+    <div class="stat-item"><div class="stat-value">Part 91</div><div class="stat-label">Exclusively. No charter, ever.</div></div>
+    <div class="stat-item"><div class="stat-value">Zero</div><div class="stat-label">Vendor markups. Ever.</div></div>
+    <div class="stat-item"><div class="stat-value">Up to 50%</div><div class="stat-label">Potential maintenance savings for low-time Citation operators</div></div>
+    <div class="stat-item"><div class="stat-value">One</div><div class="stat-label">Point of contact. Always direct.</div></div>
+  </div>
+</div>
+
+<div class="quote-block reveal">
+  <span class="quote-mark">"</span>
+  <p class="quote-text">We are not a management company that runs charter on the side. We are your advocate -- exclusively.</p>
+  <div class="quote-rule"></div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">J3<span>T</span></div>
+    <div class="footer-tagline">Part 91 aircraft management, done right.</div>
+    <div class="footer-note">Part 91 Only &middot; Confidential</div>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open');}
+var els=document.querySelectorAll('.reveal');
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('visible');},i*80);observer.unobserve(e.target);}});},{threshold:0.1});
+els.forEach(function(el){observer.observe(el);});
+var cursor=document.getElementById('cursor');
+var ring=document.getElementById('cursorRing');
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(function(el){el.addEventListener('mouseenter',function(){cursor.style.width='12px';cursor.style.height='12px';ring.style.width='48px';ring.style.height='48px';});el.addEventListener('mouseleave',function(){cursor.style.width='8px';cursor.style.height='8px';ring.style.width='32px';ring.style.height='32px';});});
+</script>
+</body>
+</html>

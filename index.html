@@ -75,6 +75,7 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
 .footer-logo span{color:var(--gold);}
 .footer-tagline{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--stone);}
 .footer-note{font-family:var(--sans);font-size:11px;letter-spacing:2px;color:rgba(154,148,136,.5);text-transform:uppercase;}
+.prog-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--mist);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes scrollPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
@@ -88,6 +89,8 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   .hero::after{display:none;}
   .pillars{padding:60px 24px;}
   .pillars-inner{grid-template-columns:1fr;}
+  .prog-preview-grid{grid-template-columns:1fr;}
+  .prog-preview-wrap{padding:60px 24px!important;}
   .section{padding:60px 24px;}
   .quote-block,.cta-block{padding:60px 24px;}
   .footer-inner{flex-direction:column;gap:20px;text-align:center;}
@@ -188,7 +191,7 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   <div style="max-width:1200px;margin:0 auto;">
     <p class="section-label">What we offer</p>
     <h2 class="section-title">Two programs.<br><em>Nothing more.</em></h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--mist);">
+    <div class="prog-preview-grid">
 
       <div style="background:var(--warm-white);padding:52px 44px;">
         <p style="font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">Program One</p>

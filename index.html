@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- J3T Homepage — revised for copy, trust signals, accessibility, and typography.
+     Look for "FILL IN" comments where you need to plug in real info before shipping. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J3T Management -- Private Aircraft Management | Part 91 | Florida</title>
-<meta name="description" content="J3T Management provides discreet, owner-first Part 91 aircraft management. No markups, no charter, no conflict of interest. Based in Florida. Call 239-747-7983.">
+<title>J3T Management · Part 91 Private Aircraft Management · Southwest Florida</title>
+<meta name="description" content="Owner-first Part 91 aircraft management from Southwest Florida. No markups, no charter, no conflict of interest. Call 239-747-7983.">
 <meta name="keywords" content="Part 91 aircraft management, private jet management Florida, Citation X management, aircraft maintenance oversight, jet management company">
-<meta property="og:title" content="J3T Management -- Private Aircraft Management">
+<meta property="og:title" content="J3T Management — Private Aircraft Management">
 <meta property="og:description" content="Owner-first Part 91 aircraft management. Discretion. Simplicity. Trust.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +19,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;font-size:20px;}
 body{font-family:var(--sans);background:var(--warm-white);color:var(--ink);overflow-x:hidden;cursor:none;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
 .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .25s,height .25s;}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 60px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s;}
@@ -33,7 +36,13 @@ nav.scrolled{background:rgba(15,15,15,.97);border-bottom:1px solid rgba(160,132,
 .hamburger.open span:nth-child(2){opacity:0;}
 .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
 .hero{min-height:100vh;background:var(--charcoal);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.hero::after{content:'';position:absolute;top:0;right:120px;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(160,132,80,.3) 30%,rgba(160,132,80,.3) 70%,transparent);}
+.hero-bracket{position:absolute;width:64px;height:64px;border-color:var(--gold);opacity:.28;pointer-events:none;z-index:1;}
+.hero-bracket.tl{top:96px;left:40px;border-top:1px solid;border-left:1px solid;}
+.hero-bracket.tr{top:96px;right:40px;border-top:1px solid;border-right:1px solid;}
+.hero-bracket.bl{bottom:40px;left:40px;border-bottom:1px solid;border-left:1px solid;}
+.hero-bracket.br{bottom:40px;right:40px;border-bottom:1px solid;border-right:1px solid;}
+.hero-compass{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:1;}
+.hero-compass svg{width:min(58%,580px);height:auto;opacity:.11;}
 .hero-content{text-align:center;position:relative;z-index:2;opacity:0;transform:translateY(30px);animation:fadeUp 1.2s cubic-bezier(.16,1,.3,1) .3s forwards;}
 .hero-eyebrow{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:32px;opacity:0;animation:fadeUp 1s ease .6s forwards;}
 .hero-title{font-family:var(--serif);font-size:clamp(80px,12vw,150px);font-weight:300;line-height:.9;color:var(--warm-white);letter-spacing:-2px;margin-bottom:8px;}
@@ -43,7 +52,7 @@ nav.scrolled{background:rgba(15,15,15,.97);border-bottom:1px solid rgba(160,132,
 .hero-statement{font-family:var(--serif);font-size:clamp(20px,2.2vw,26px);font-weight:300;font-style:italic;color:rgba(247,245,240,.6);max-width:540px;line-height:1.7;margin:0 auto 64px;opacity:0;animation:fadeUp 1s ease 1.2s forwards;}
 .hero-cta{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--warm-white);text-decoration:none;padding:18px 44px;border:1px solid rgba(160,132,80,.5);transition:all .3s;cursor:none;opacity:0;animation:fadeUp 1s ease 1.4s forwards;}
 .hero-cta:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);}
-.hero-scroll{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s ease 2s forwards;}
+.hero-scroll{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s ease 2s forwards;z-index:2;}
 .hero-scroll span{font-family:var(--sans);font-size:10px;letter-spacing:4px;color:var(--stone);text-transform:uppercase;}
 .scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2s ease infinite;}
 .pillars{background:var(--charcoal);padding:100px 60px;}
@@ -59,6 +68,7 @@ nav.scrolled{background:rgba(15,15,15,.97);border-bottom:1px solid rgba(160,132,
 .section-title{font-family:var(--serif);font-size:clamp(40px,5vw,68px);font-weight:300;line-height:1.1;color:var(--charcoal);margin-bottom:32px;}
 .section-title em{font-style:italic;color:var(--gold);}
 .section-body{font-family:var(--serif);font-size:23px;line-height:1.8;color:#4A4A48;max-width:640px;}
+.section-signature{font-family:var(--serif);font-size:17px;font-style:italic;color:#6B6B66;max-width:640px;margin-top:24px;}
 .link-gold{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-pale);padding-bottom:4px;cursor:none;}
 .cta-block{background:var(--charcoal);padding:100px 60px;text-align:center;}
 .cta-btn-outline{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--warm-white);text-decoration:none;padding:20px 44px;border:1px solid rgba(160,132,80,.5);transition:all .3s;cursor:none;display:inline-flex;align-items:center;gap:10px;}
@@ -67,13 +77,16 @@ nav.scrolled{background:rgba(15,15,15,.97);border-bottom:1px solid rgba(160,132,
 .cta-btn-solid:hover{background:var(--gold-light);border-color:var(--gold-light);}
 .quote-block{background:var(--cream);padding:100px 60px;text-align:center;}
 .quote-mark{font-family:var(--serif);font-size:100px;color:var(--gold-pale);line-height:.5;margin-bottom:32px;display:block;}
-.quote-text{font-family:var(--serif);font-size:clamp(26px,3vw,40px);font-weight:300;font-style:italic;color:var(--charcoal);line-height:1.5;max-width:780px;margin:0 auto 36px;}
+.quote-text{font-family:var(--serif);font-size:clamp(26px,3vw,40px);font-weight:300;font-style:italic;color:var(--charcoal);line-height:1.5;max-width:780px;margin:0 auto 24px;}
+.quote-attribution{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:28px;}
 .quote-rule{width:48px;height:1px;background:var(--gold);margin:0 auto;}
 footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(160,132,80,.15);}
-.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
 .footer-logo{font-family:var(--sans);font-size:16px;font-weight:600;letter-spacing:4px;color:var(--warm-white);}
 .footer-logo span{color:var(--gold);}
+.footer-center{text-align:center;}
 .footer-tagline{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--stone);}
+.footer-location{font-family:var(--sans);font-size:10px;letter-spacing:2px;color:rgba(154,148,136,.55);text-transform:uppercase;margin-top:6px;}
 .footer-note{font-family:var(--sans);font-size:11px;letter-spacing:2px;color:rgba(154,148,136,.5);text-transform:uppercase;}
 .prog-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--mist);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
@@ -81,12 +94,23 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
 @keyframes scrollPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
 .reveal.visible{opacity:1;transform:none;}
+/* Only run the custom gold-dot cursor on true mouse devices.
+   On touch, pen, or hover-less devices we restore the system cursor. */
+@media not all and (hover: hover) and (pointer: fine){
+  body,a,button,.nav-logo,.nav-links a,.hero-cta,.cta-btn-outline,.cta-btn-solid,.link-gold{cursor:auto!important;}
+  .cursor,.cursor-ring{display:none!important;}
+}
 @media(max-width:768px){
   nav{padding:0 24px;}
   .nav-links{display:none;}
   .nav-links.open{display:flex;flex-direction:column;position:fixed;top:72px;left:0;right:0;background:rgba(15,15,15,.98);padding:32px 24px 40px;gap:28px;border-bottom:1px solid rgba(160,132,80,.2);z-index:99;}
   .hamburger{display:flex;}
-  .hero::after{display:none;}
+  .hero-bracket{width:40px;height:40px;}
+  .hero-bracket.tl,.hero-bracket.tr{top:88px;}
+  .hero-bracket.bl,.hero-bracket.br{bottom:24px;}
+  .hero-bracket.tl,.hero-bracket.bl{left:20px;}
+  .hero-bracket.tr,.hero-bracket.br{right:20px;}
+  .hero-compass svg{width:75%;}
   .pillars{padding:60px 24px;}
   .pillars-inner{grid-template-columns:1fr;}
   .prog-preview-grid{grid-template-columns:1fr;}
@@ -102,23 +126,39 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 <nav id="nav">
-  <a href="index.html" class="nav-logo">J3<span>T</span></a>
+  <a href="index.html" class="nav-logo" aria-label="J3T Management — Home">J3<span>T</span></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="programs.html">Programs</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
 
 <section class="hero">
+  <span class="hero-bracket tl" aria-hidden="true"></span>
+  <span class="hero-bracket tr" aria-hidden="true"></span>
+  <span class="hero-bracket bl" aria-hidden="true"></span>
+  <span class="hero-bracket br" aria-hidden="true"></span>
+  <div class="hero-compass" aria-hidden="true">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#A08450" stroke-width=".6">
+      <circle cx="200" cy="200" r="184"/>
+      <circle cx="200" cy="200" r="146"/>
+      <circle cx="200" cy="200" r="102"/>
+      <line x1="200" y1="8" x2="200" y2="392"/>
+      <line x1="8" y1="200" x2="392" y2="200"/>
+      <line x1="64" y1="64" x2="336" y2="336"/>
+      <line x1="336" y1="64" x2="64" y2="336"/>
+      <polygon points="200,34 208,192 366,200 208,208 200,366 192,208 34,200 192,192" stroke-width=".9" opacity=".85"/>
+    </svg>
+  </div>
   <div class="hero-content">
     <p class="hero-eyebrow">Part 91 &middot; Private Aviation</p>
-    <h1 class="hero-title">J3<span class="accent">T</span></h1>
+    <h1 class="hero-title">J3<span class="accent">T</span><span class="sr-only"> Management — Part 91 Private Aircraft Management</span></h1>
     <p class="hero-subtitle">Jet Management</p>
     <div class="hero-rule"></div>
-    <p class="hero-statement">Private aircraft management for those who expect more.</p>
+    <p class="hero-statement">Owner-first aircraft management. Part 91 only. No charter, no markups, no conflicts.</p>
     <a href="programs.html" class="hero-cta">View Programs</a>
   </div>
   <div class="hero-scroll"><div class="scroll-line"></div><span>Scroll</span></div>
@@ -156,8 +196,8 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
     </div>
     <div style="width:1px;height:48px;background:rgba(160,132,80,.2);"></div>
     <div style="text-align:center;flex:1;min-width:120px;">
-      <div style="font-family:var(--serif);font-size:44px;font-weight:300;color:var(--warm-white);line-height:1;">6<em style="color:var(--gold);font-style:italic;">fig</em></div>
-      <div style="font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--stone);margin-top:10px;">Annual savings potential</div>
+      <div style="font-family:var(--serif);font-size:44px;font-weight:300;color:var(--warm-white);line-height:1;"><em style="color:var(--gold);font-style:italic;">Actual</em></div>
+      <div style="font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--stone);margin-top:10px;">Cost passed through</div>
     </div>
     <div style="width:1px;height:48px;background:rgba(160,132,80,.2);"></div>
     <div style="text-align:center;flex:1;min-width:120px;">
@@ -176,13 +216,17 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   <p class="section-label">Who we are</p>
   <h2 class="section-title">Management built<br>for <em>the owner,</em><br>not the operator.</h2>
   <p class="section-body">J3T was founded on a simple premise: aircraft ownership should be transparent, efficient, and personal. We serve a select group of Part 91 owners who want expert oversight without the overhead and without the conflict of interest that define most large management companies.</p>
-  <br><br>
+
+  <p class="section-signature">Founded by Dale Francis &mdash; over a decade managing aircraft for private owners.</p>
+
+  <br>
   <a href="about.html" class="link-gold">Our Story &rarr;</a>
 </div>
 
 <div class="quote-block reveal">
-  <span class="quote-mark">"</span>
+  <span class="quote-mark">&ldquo;</span>
   <p class="quote-text">Your aircraft. Your schedule. Your information. Handled with the discretion you expect.</p>
+  <p class="quote-attribution">&mdash; J3T Operating Principle</p>
   <div class="quote-rule"></div>
 </div>
 
@@ -199,9 +243,9 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
         <div style="width:32px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
         <p style="font-family:var(--serif);font-size:17px;line-height:1.8;color:#4A4A48;margin-bottom:24px;">For owners with crew in place who need a knowledgeable advocate on the maintenance side.</p>
         <div style="display:flex;flex-direction:column;">
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--mist);font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">--</span>Maintenance planning and scheduling</div>
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--mist);font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">--</span>Vendor coordination and invoice review</div>
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">--</span>MRO oversight and owner reporting</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--mist);font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">&mdash;</span>Maintenance planning and scheduling</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--mist);font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">&mdash;</span>Vendor coordination and invoice review</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;font-family:var(--serif);font-size:15px;color:var(--charcoal);"><span style="color:var(--gold);">&mdash;</span>MRO oversight and owner reporting</div>
         </div>
         <a href="programs.html" class="link-gold" style="display:inline-block;margin-top:28px;">View program &rarr;</a>
       </div>
@@ -210,11 +254,11 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
         <p style="font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">Program Two</p>
         <h3 style="font-family:var(--serif);font-size:32px;font-weight:300;color:var(--warm-white);line-height:1.1;margin-bottom:16px;">Full<br>Management<br><em style="color:var(--gold);font-style:italic;">Program</em></h3>
         <div style="width:32px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
-        <p style="font-family:var(--serif);font-size:17px;line-height:1.8;color:rgba(247,245,240,.65);margin-bottom:24px;">Complete Part 91 management. Crew, trips, maintenance, cost optimization -- all through one relationship.</p>
+        <p style="font-family:var(--serif);font-size:17px;line-height:1.8;color:rgba(247,245,240,.65);margin-bottom:24px;">Complete Part 91 management. Crew, trips, maintenance, cost optimization &mdash; all through one relationship.</p>
         <div style="display:flex;flex-direction:column;">
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(247,245,240,.08);font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">--</span>Everything in Program One</div>
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(247,245,240,.08);font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">--</span>Crew placement and trip coordination</div>
-          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">--</span>Fuel, FBO, and cost management</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(247,245,240,.08);font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">&mdash;</span>Everything in Program One</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(247,245,240,.08);font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">&mdash;</span>Crew placement and trip coordination</div>
+          <div style="display:flex;gap:16px;align-items:baseline;padding:11px 0;font-family:var(--serif);font-size:15px;color:rgba(247,245,240,.85);"><span style="color:var(--gold);">&mdash;</span>Fuel, FBO, and cost management</div>
         </div>
         <a href="programs.html" style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold-light);text-decoration:none;border-bottom:1px solid rgba(200,169,106,.3);padding-bottom:3px;display:inline-block;margin-top:28px;">View program &rarr;</a>
       </div>
@@ -227,23 +271,27 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   <p class="section-label" style="text-align:center;margin-bottom:24px;">Get in touch</p>
   <h2 style="font-family:var(--serif);font-size:clamp(30px,4vw,52px);font-weight:300;color:var(--warm-white);line-height:1.2;margin-bottom:20px;">We don't do sales calls.<br>We do <em style="color:var(--gold);font-style:italic;">honest conversations.</em></h2>
   <p style="font-family:var(--serif);font-size:23px;font-style:italic;color:var(--stone);margin-bottom:12px;">If it's a fit, you'll know in fifteen minutes.</p>
-  <p style="font-family:var(--serif);font-size:20px;color:var(--stone);margin-bottom:48px;">Text us your tail number and what you're looking for -- we'll take it from there.</p>
+  <p style="font-family:var(--serif);font-size:20px;color:var(--stone);margin-bottom:48px;">Text us your tail number and what you're looking for &mdash; we'll take it from there.</p>
   <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-    <a href="tel:2397477983" class="cta-btn-outline">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    <a href="tel:+12397477983" class="cta-btn-outline">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
       Call &nbsp;239-747-7983
     </a>
-    <a href="sms:2397477983&body=Hi, my tail number is [TAIL]. I am looking for: " class="cta-btn-solid">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <a href="sms:+12397477983?body=Hi%2C%20my%20tail%20number%20is%20%5BTAIL%5D.%20I%20am%20looking%20for%3A%20" class="cta-btn-solid">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       Text Us
     </a>
   </div>
+  <p style="font-family:var(--sans);font-size:11px;font-style:italic;color:var(--stone);margin-top:20px;max-width:540px;margin-left:auto;margin-right:auto;line-height:1.6;opacity:0.7;">Text messaging originator opt-in data and consent will not be shared with any third parties.</p>
 </div>
 
 <footer>
   <div class="footer-inner">
     <div class="footer-logo">J3<span>T</span></div>
-    <div class="footer-tagline">Part 91 aircraft management, done right.</div>
+    <div class="footer-center">
+      <div class="footer-tagline">Part 91 aircraft management, done right.</div>
+      <div class="footer-location">Southwest Florida &middot; Serving owners nationwide</div>
+    </div>
     <div class="footer-note">Part 91 Only &middot; Confidential</div>
   </div>
 </footer>
@@ -254,12 +302,16 @@ window.addEventListener('scroll',function(){document.getElementById('nav').class
 var els=document.querySelectorAll('.reveal');
 var observer=new IntersectionObserver(function(entries){entries.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('visible');},i*80);observer.unobserve(e.target);}});},{threshold:0.1});
 els.forEach(function(el){observer.observe(el);});
-var cursor=document.getElementById('cursor');
-var ring=document.getElementById('cursorRing');
-var mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
-document.querySelectorAll('a,button').forEach(function(el){el.addEventListener('mouseenter',function(){cursor.style.width='12px';cursor.style.height='12px';ring.style.width='48px';ring.style.height='48px';});el.addEventListener('mouseleave',function(){cursor.style.width='8px';cursor.style.height='8px';ring.style.width='32px';ring.style.height='32px';});});
+// Custom cursor: only attach behaviour on true mouse devices
+var isFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if(isFinePointer){
+  var cursor=document.getElementById('cursor');
+  var ring=document.getElementById('cursorRing');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button').forEach(function(el){el.addEventListener('mouseenter',function(){cursor.style.width='12px';cursor.style.height='12px';ring.style.width='48px';ring.style.height='48px';});el.addEventListener('mouseleave',function(){cursor.style.width='8px';cursor.style.height='8px';ring.style.width='32px';ring.style.height='32px';});});
+}
 </script>
 </body>
 </html>

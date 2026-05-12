@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /links.html
+Disallow: /links
 
 Sitemap: https://j3taviation.com/sitemap.xml

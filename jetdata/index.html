@@ -1,0 +1,3539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>J3T Jet Data — Cost & Performance Compare</title>
+<meta name="theme-color" content="#d4af37" />
+<style>
+  :root {
+    --bg: #07090d;
+    --bg-2: #0c1018;
+    --panel: rgba(20, 26, 36, 0.72);
+    --panel-solid: #141a24;
+    --panel-2: #1a2230;
+    --border: rgba(212, 175, 55, 0.12);
+    --border-strong: rgba(212, 175, 55, 0.28);
+    --ink: #f4f1ea;
+    --ink-2: #d6d2c6;
+    --muted: #8a8f99;
+    --muted-2: #5d6573;
+    --gold: #d4af37;
+    --gold-2: #f0c75e;
+    --gold-glow: rgba(212, 175, 55, 0.28);
+    --blue: #4d7bff;
+    --green: #4ade80;
+    --red: #ef4444;
+    --orange: #f0a830;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(212, 175, 55, 0.08), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(77, 123, 255, 0.05), transparent 50%),
+      var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+  }
+
+  header {
+    padding: 14px 22px;
+    background: linear-gradient(180deg, rgba(20, 26, 36, 0.9), rgba(20, 26, 36, 0.65)), var(--bg-2);
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px);
+  }
+  header::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-glow), transparent);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold) 0%, #b8932d 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: #0a0a0a; font-size: 16px;
+    box-shadow: 0 4px 12px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,0.3);
+    letter-spacing: -0.5px;
+  }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-text h1 {
+    margin: 0; font-size: 15px; font-weight: 700;
+    letter-spacing: 2.4px; color: var(--ink); text-transform: uppercase;
+  }
+  .brand-text .sub {
+    color: var(--gold); font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 600; margin-top: 2px;
+  }
+
+  .tabs { display: flex; gap: 4px; margin-left: auto; }
+  .tab {
+    padding: 9px 16px; font-size: 12px; font-weight: 600;
+    color: var(--muted); background: transparent;
+    border: 1px solid transparent; border-radius: 8px;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tab:hover { color: var(--ink-2); background: rgba(255,255,255,0.03); }
+  .tab.active {
+    color: var(--gold); background: rgba(212, 175, 55, 0.08);
+    border-color: var(--border-strong);
+  }
+
+  main { padding: 22px; max-width: 1600px; margin: 0 auto; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .panel {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px; backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-md);
+  }
+  .panel + .panel { margin-top: 18px; }
+
+  .section-title {
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 2px;
+    margin: 0 0 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ---------- Controls ---------- */
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+  }
+  input[type=text], input[type=number], select {
+    background: var(--panel-solid); color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px; padding: 8px 10px;
+    font-size: 13px; font-family: inherit;
+    transition: border-color 0.15s;
+    min-width: 80px;
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus {
+    outline: none; border-color: var(--gold);
+    box-shadow: 0 0 0 2px var(--gold-glow);
+  }
+  .btn {
+    background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 100%);
+    color: #0a0a0a; border: none; border-radius: 8px;
+    padding: 10px 20px; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    cursor: pointer; box-shadow: var(--shadow-sm);
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px var(--gold-glow); }
+  .btn:active { transform: translateY(0); }
+  .btn.ghost {
+    background: transparent; color: var(--gold);
+    border: 1px solid var(--border-strong);
+  }
+  .btn.ghost:hover { background: rgba(212, 175, 55, 0.08); box-shadow: none; }
+
+  /* ---------- Compare Table ---------- */
+  .filters { margin-bottom: 14px; }
+  .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+  table.compare {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    min-width: 1200px;
+  }
+  table.compare thead th {
+    position: sticky; top: 0;
+    background: var(--panel-2);
+    color: var(--gold); text-transform: uppercase;
+    font-size: 10px; letter-spacing: 1.2px; font-weight: 700;
+    padding: 12px 10px; text-align: right; white-space: nowrap;
+    cursor: pointer; user-select: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  table.compare thead th:first-child { text-align: left; }
+  table.compare thead th:hover { background: #1f2735; }
+  table.compare thead th.sorted::after {
+    content: ' ▾'; color: var(--gold);
+  }
+  table.compare thead th.sorted.asc::after { content: ' ▴'; }
+  table.compare tbody td {
+    padding: 11px 10px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+  }
+  table.compare tbody td:first-child {
+    text-align: left; font-weight: 600;
+  }
+  table.compare tbody tr:hover { background: rgba(212, 175, 55, 0.04); }
+  table.compare tbody tr:last-child td { border-bottom: none; }
+
+  .cat-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.8px;
+    background: rgba(77, 123, 255, 0.15); color: var(--blue);
+    margin-left: 8px;
+  }
+  .cat-pill.heavy { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
+  .cat-pill.super-mid { background: rgba(240, 168, 48, 0.15); color: var(--orange); }
+  .cat-pill.midsize { background: rgba(77, 123, 255, 0.15); color: var(--blue); }
+  .cat-pill.light { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .cat-pill.ultra-long { background: rgba(212, 175, 55, 0.22); color: var(--gold-2); }
+
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); }
+  .sub-num { color: var(--muted); font-size: 10.5px; }
+
+  /* ---------- Trip Calculator ---------- */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 980px) { .calc-grid { grid-template-columns: 1fr; } }
+  .wind-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+  @media (max-width: 720px) { .wind-grid { grid-template-columns: repeat(2, 1fr); } }
+  .wind-cell {
+    background: rgba(20, 26, 36, 0.5);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .wind-cell-header {
+    font-size: 10px; color: var(--gold);
+    font-weight: 700; letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+  .wind-cell input { width: 100%; min-width: 0; font-size: 12px; padding: 5px 6px; }
+  .wind-cell .wind-row { display: flex; gap: 5px; }
+  .wind-cell .wind-row .field { flex: 1; }
+  .wind-cell .wind-row label { font-size: 9px; }
+
+  .typeahead { position: relative; }
+  .typeahead-list {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--panel-solid); border: 1px solid var(--border-strong);
+    border-radius: 6px; margin-top: 4px;
+    max-height: 240px; overflow-y: auto; z-index: 5;
+    display: none; box-shadow: var(--shadow-md);
+  }
+  .typeahead-list.show { display: block; }
+  .typeahead-item {
+    padding: 8px 10px; font-size: 12px; cursor: pointer;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+  }
+  .typeahead-item:hover { background: rgba(212, 175, 55, 0.08); }
+  .typeahead-item .icao { color: var(--gold); font-weight: 700; }
+  .typeahead-item .name { color: var(--ink-2); }
+  .typeahead-item .meta { color: var(--muted); font-size: 10.5px; }
+
+  /* ---------- Results ---------- */
+  .results-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .summary-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .summary-card .label {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .summary-card .value {
+    font-size: 20px; font-weight: 700; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-card .value .unit { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .aircraft-result {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .aircraft-result.no-go { opacity: 0.5; }
+  .aircraft-result-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .aircraft-result-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .aircraft-result-meta { font-size: 11px; color: var(--muted); }
+  .badge {
+    display: inline-block; padding: 2px 7px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; margin-left: 6px;
+  }
+  .badge.nonstop { background: rgba(74, 222, 128, 0.18); color: var(--green); }
+  .badge.refuel { background: rgba(239, 68, 68, 0.18); color: var(--red); }
+  .badge.best-time { background: rgba(77, 123, 255, 0.18); color: var(--blue); }
+  .badge.best-cost { background: rgba(212, 175, 55, 0.2); color: var(--gold); }
+
+  table.alt-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  table.alt-table th {
+    color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+    text-align: right; padding: 6px 8px;
+  }
+  table.alt-table th:first-child { text-align: left; }
+  table.alt-table td {
+    padding: 7px 8px; text-align: right;
+    border-top: 1px solid rgba(212, 175, 55, 0.05);
+  }
+  table.alt-table td:first-child {
+    text-align: left; font-weight: 600; color: var(--gold);
+  }
+  table.alt-table tr.best-cost { background: rgba(212, 175, 55, 0.06); }
+  table.alt-table tr.best-time { background: rgba(77, 123, 255, 0.05); }
+
+  .placeholder {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  .footer-note {
+    margin-top: 24px; padding: 14px 18px;
+    background: rgba(20, 26, 36, 0.4);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    font-size: 11px; color: var(--muted); line-height: 1.6;
+  }
+  .footer-note strong { color: var(--gold); }
+
+  /* ---------- Aircraft Selector ---------- */
+  .selector-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .selector-count {
+    font-size: 11px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+  }
+  .selector-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn-sm {
+    padding: 5px 10px; font-size: 10px; letter-spacing: 1px;
+  }
+  .selector-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .selector-group {
+    background: rgba(20, 26, 36, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .selector-group-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700;
+    margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .selector-group-toggle {
+    background: transparent; border: 1px solid var(--border-strong);
+    color: var(--muted); font-size: 9px; letter-spacing: 0.8px;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+    cursor: pointer; font-family: inherit;
+  }
+  .selector-group-toggle:hover { color: var(--gold); border-color: var(--gold); }
+  .selector-chips {
+    display: flex; flex-wrap: wrap; gap: 5px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 9px;
+    background: rgba(20, 26, 36, 0.6);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 14px;
+    font-size: 11px; color: var(--muted);
+    cursor: pointer; user-select: none;
+    transition: all 0.12s;
+  }
+  .chip:hover { color: var(--ink-2); border-color: var(--border-strong); }
+  .chip input { display: none; }
+  .chip.on {
+    background: rgba(212, 175, 55, 0.12);
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+  .chip.on::before {
+    content: '✓'; color: var(--gold); font-weight: 700;
+  }
+
+  /* ---------- Wind fetch status ---------- */
+  .wind-actions {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .wind-status {
+    margin-top: 8px; padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 11px; color: var(--muted);
+    background: rgba(20, 26, 36, 0.4);
+    border: 1px solid var(--border);
+    display: none;
+  }
+  .wind-status.show { display: block; }
+  .wind-status.ok { color: var(--green); border-color: rgba(74, 222, 128, 0.25); }
+  .wind-status.error { color: var(--red); border-color: rgba(239, 68, 68, 0.3); }
+  .wind-status.loading { color: var(--gold); border-color: var(--border-strong); }
+  .wind-status code { color: var(--gold-2); font-size: 11px; }
+
+  .spinner {
+    display: inline-block; width: 10px; height: 10px;
+    border: 2px solid var(--gold); border-top-color: transparent;
+    border-radius: 50%; vertical-align: -1px; margin-right: 6px;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Cost Chart ---------- */
+  .chart-controls {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 16px; align-items: flex-end;
+  }
+  .cost-chart {
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) 1fr 120px;
+    gap: 12px; align-items: center;
+    padding: 3px 0;
+    font-size: 12px;
+  }
+  .cost-row .label {
+    font-weight: 600; color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .cost-row .label .ceiling-warn {
+    color: var(--orange); font-size: 9.5px;
+    margin-left: 6px; font-weight: 600;
+    letter-spacing: 0.6px; text-transform: uppercase;
+  }
+  .cost-row .bar-container {
+    height: 22px; background: rgba(20, 26, 36, 0.5);
+    border-radius: 4px; overflow: hidden;
+    position: relative;
+  }
+  .cost-row .bar-stack { height: 100%; display: flex; }
+  .bar-segment { height: 100%; transition: opacity 0.15s; }
+  .bar-segment:hover { opacity: 0.85; }
+  .bar-fuel    { background: linear-gradient(180deg, var(--gold-2), var(--gold)); }
+  .bar-mx      { background: linear-gradient(180deg, #6b8aff, var(--blue)); }
+  .bar-engine  { background: linear-gradient(180deg, #ffa44a, var(--orange)); }
+  .cost-row .cost-value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700; color: var(--gold);
+  }
+  .cost-row .cost-value .unit { font-size: 10px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+  .cost-row.above-ceiling .bar-container {
+    background: transparent;
+    color: var(--muted); font-size: 11px;
+    display: flex; align-items: center; padding-left: 10px;
+    font-style: italic;
+  }
+  .cost-row.above-ceiling .label,
+  .cost-row.above-ceiling .cost-value { opacity: 0.5; }
+  .cost-row.above-ceiling .cost-value { color: var(--muted); font-weight: 400; }
+  .chart-legend {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 11px; color: var(--muted);
+  }
+  .chart-legend .swatch {
+    display: inline-block; width: 11px; height: 11px;
+    border-radius: 2px; vertical-align: -1px; margin-right: 6px;
+  }
+
+  /* ---------- Custom altitude picker ---------- */
+  .alt-picker {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .alt-picker-group {
+    background: rgba(20, 26, 36, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+  }
+  .alt-picker-group-label {
+    font-size: 10px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700;
+    margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .alt-picker-row {
+    display: grid;
+    grid-template-columns: minmax(170px, 220px) 1fr;
+    gap: 12px; align-items: center;
+    padding: 5px 0;
+    font-size: 12px;
+    border-top: 1px solid rgba(212, 175, 55, 0.04);
+  }
+  .alt-picker-row:first-of-type { border-top: none; }
+  .alt-picker-row .name { font-weight: 600; color: var(--ink); }
+  .alt-picker-chips {
+    display: flex; gap: 5px; flex-wrap: wrap;
+  }
+  .alt-chip {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px;
+    background: rgba(20, 26, 36, 0.6);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 12px;
+    font-size: 11px; color: var(--muted);
+    cursor: pointer; user-select: none;
+    transition: all 0.12s;
+    font-variant-numeric: tabular-nums;
+  }
+  .alt-chip:hover { color: var(--ink-2); border-color: var(--border-strong); }
+  .alt-chip input { display: none; }
+  .alt-chip.on {
+    background: rgba(212, 175, 55, 0.12);
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+  .alt-chip.on::before { content: '✓ '; color: var(--gold); font-weight: 700; }
+  .alt-chip.ceiling { border-style: dashed; }
+  .alt-chip .ceiling-mark {
+    color: var(--orange); font-size: 9px; margin-left: 4px;
+    font-weight: 700; letter-spacing: 0.5px;
+  }
+  .alt-chip.ceiling.on .ceiling-mark { color: var(--orange); }
+
+  /* ---------- Trip side-by-side summary ---------- */
+  table.trip-summary {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  table.trip-summary thead th {
+    background: var(--panel-2);
+    color: var(--gold); text-transform: uppercase;
+    font-size: 10px; letter-spacing: 1.2px; font-weight: 700;
+    padding: 10px 9px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  table.trip-summary thead th:first-child { text-align: left; }
+  table.trip-summary thead th.divider { border-left: 1px solid var(--border); }
+  table.trip-summary tbody td {
+    padding: 9px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+  }
+  table.trip-summary tbody td:first-child {
+    text-align: left; font-weight: 600;
+  }
+  table.trip-summary tbody td.divider { border-left: 1px solid var(--border); }
+  table.trip-summary tbody tr:hover { background: rgba(212, 175, 55, 0.04); }
+  table.trip-summary .fl { color: var(--muted); font-size: 11px; }
+  table.trip-summary .sub-num { color: var(--muted); font-size: 10.5px; }
+
+  /* Trip altitude row checkbox */
+  .alt-row-check {
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer; user-select: none;
+  }
+  .alt-row-check input[type=checkbox] {
+    appearance: none; -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--panel-solid);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .alt-row-check input[type=checkbox]:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .alt-row-check input[type=checkbox]:checked::after {
+    content: '✓'; position: absolute;
+    top: -2px; left: 1px;
+    color: #0a0a0a; font-size: 11px; font-weight: 900;
+  }
+  table.alt-table tr.excluded { opacity: 0.4; }
+  table.alt-table tr.excluded td { color: var(--muted); }
+
+  /* ---------- Value Estimator ---------- */
+  .val-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 14px; align-items: flex-end;
+  }
+  @media (max-width: 720px) { .val-form { grid-template-columns: 1fr; } }
+  .val-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 18px 0;
+  }
+  @media (max-width: 640px) { .val-result-grid { grid-template-columns: 1fr; } }
+  .val-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+    text-align: center;
+  }
+  .val-card.mid {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.08), rgba(20, 26, 36, 0.6));
+  }
+  .val-card .val-label {
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .val-card.mid .val-label { color: var(--gold); }
+  .val-card .val-amount {
+    font-size: 26px; font-weight: 700; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .val-card.mid .val-amount { color: var(--gold); font-size: 30px; }
+  .val-card .val-sub {
+    margin-top: 4px;
+    font-size: 11px; color: var(--muted);
+  }
+  .val-breakdown {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px;
+    margin-top: 14px;
+  }
+  .val-breakdown h3 {
+    font-size: 11px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin: 0 0 10px;
+  }
+  .val-breakdown table {
+    width: 100%; font-size: 12px; font-variant-numeric: tabular-nums;
+  }
+  .val-breakdown td {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+  }
+  .val-breakdown td:first-child { color: var(--muted); }
+  .val-breakdown td:last-child { text-align: right; color: var(--ink); font-weight: 600; }
+  .val-disclaimer {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    font-size: 11px; color: var(--ink-2); line-height: 1.6;
+  }
+  .val-disclaimer strong { color: var(--red); }
+
+  /* ---------- Side-by-side specs ---------- */
+  table.side-by-side {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    min-width: 500px;
+  }
+  table.side-by-side thead th {
+    background: var(--panel-2);
+    color: var(--ink);
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 2px solid var(--border-strong);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 140px;
+  }
+  table.side-by-side thead th:first-child {
+    text-align: left;
+    background: transparent;
+    border-bottom: 2px solid var(--border);
+    min-width: 180px;
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  table.side-by-side tbody td {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--ink-2);
+  }
+  table.side-by-side tbody td:first-child {
+    text-align: left;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    white-space: normal;
+  }
+  table.side-by-side tbody tr.section-header td {
+    background: rgba(212, 175, 55, 0.06);
+    color: var(--gold);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: left !important;
+  }
+  table.side-by-side tbody tr:hover td:not(:first-child) {
+    background: rgba(212, 175, 55, 0.04);
+  }
+  table.side-by-side tbody tr.section-header:hover td {
+    background: rgba(212, 175, 55, 0.10);
+  }
+  table.side-by-side tbody td.best { color: var(--gold); font-weight: 700; }
+
+  /* ---------- MX Program toggles ---------- */
+  .mx-toggles {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .mx-toggle {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer; user-select: none;
+    transition: all 0.15s;
+    min-width: 240px;
+  }
+  .mx-toggle:hover { border-color: var(--border-strong); }
+  .mx-toggle.on {
+    border-color: var(--green);
+    background: linear-gradient(180deg, rgba(74, 222, 128, 0.08), rgba(20, 26, 36, 0.6));
+  }
+  .mx-toggle input {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: var(--panel-solid);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .mx-toggle.on input {
+    background: var(--green); border-color: var(--green);
+  }
+  .mx-toggle.on input::after {
+    content: '✓'; position: absolute;
+    top: -3px; left: 2px;
+    color: #0a0a0a; font-size: 14px; font-weight: 900;
+  }
+  .mx-toggle-content { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .mx-toggle-name { font-weight: 600; color: var(--ink); font-size: 12.5px; }
+  .mx-toggle-info {
+    font-size: 11px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .mx-toggle-info .strike { text-decoration: line-through; }
+  .mx-toggle-info .new { color: var(--green); font-weight: 600; }
+
+  /* small badge in side-by-side header when MX program is on */
+  .mx-program-badge {
+    display: block; margin-top: 3px;
+    font-size: 9px; color: var(--green);
+    font-weight: 700; letter-spacing: 0.6px;
+  }
+  /* Strikethrough + discounted price in side-by-side body */
+  .mx-strike { text-decoration: line-through; color: var(--muted); margin-right: 6px; }
+  .mx-disc   { color: var(--green); font-weight: 700; }
+
+  /* about view */
+  .about-content { max-width: 760px; line-height: 1.65; font-size: 13.5px; color: var(--ink-2); }
+  .about-content h3 { color: var(--gold); font-size: 12px; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-top: 22px; }
+  .about-content ul { padding-left: 20px; }
+  .about-content code {
+    background: var(--panel-2); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px; color: var(--gold-2);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">J3T</div>
+    <div class="brand-text">
+      <h1>Jet Data</h1>
+      <span class="sub">Cost &amp; Performance Compare</span>
+    </div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-view="compare">Compare</button>
+    <button class="tab" data-view="trip">Trip Calculator</button>
+    <button class="tab" data-view="value">Value Estimator</button>
+    <button class="tab" data-view="about">Notes</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ COMPARE VIEW ============ -->
+  <section class="view active" id="view-compare">
+
+    <div class="panel">
+      <h2 class="section-title">Aircraft to Compare</h2>
+      <div class="selector-header">
+        <span class="selector-count" id="compare-selector-count">4 of 30 selected</span>
+        <div class="selector-actions">
+          <button class="btn ghost btn-sm" data-compare-action="typical">Reset to Typical</button>
+          <button class="btn ghost btn-sm" data-compare-action="all">Select All</button>
+          <button class="btn ghost btn-sm" data-compare-action="none">Clear</button>
+        </div>
+      </div>
+      <div class="selector-groups" id="compare-aircraft-selector"></div>
+    </div>
+
+    <div class="panel" id="mx-program-panel">
+      <h2 class="section-title">Specialized Maintenance Program</h2>
+      <p style="font-size: 12px; color: var(--muted); margin: -6px 0 14px; max-width: 720px;">
+        Operators of select Citations qualify for a program that reduces airframe maintenance reserves by ~50%. Toggle the aircraft below to apply the discount — it flows through every $/hr, $/trip, chart, and side-by-side number on this tab and in the Trip Calculator. Engine and APU reserves are not affected (those are separate OEM programs).
+      </p>
+      <div class="mx-toggles" id="mx-toggles"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Side-by-Side Specs</h2>
+      <div class="table-wrap" id="side-by-side-container"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Aircraft Comparison</h2>
+      <div class="filters row">
+        <div class="field">
+          <label>Category</label>
+          <select id="filter-category">
+            <option value="">All</option>
+            <option value="light">Light</option>
+            <option value="midsize">Midsize</option>
+            <option value="super-mid">Super-Midsize</option>
+            <option value="heavy">Heavy</option>
+            <option value="ultra-long">Ultra-Long Range</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Manufacturer</label>
+          <select id="filter-mfr">
+            <option value="">All</option>
+            <option value="Dassault">Dassault</option>
+            <option value="Cessna">Cessna</option>
+            <option value="Gulfstream">Gulfstream</option>
+            <option value="Bombardier">Bombardier</option>
+            <option value="Embraer">Embraer</option>
+            <option value="Hawker">Hawker</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Min Range (nm)</label>
+          <input type="number" id="filter-range" placeholder="0" min="0" step="500" />
+        </div>
+        <div class="field">
+          <label>Min Seats</label>
+          <input type="number" id="filter-seats" placeholder="0" min="0" />
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="compare" id="compare-table">
+          <thead>
+            <tr>
+              <th data-sort="name">Aircraft</th>
+              <th data-sort="seats">Seats</th>
+              <th data-sort="range">Range<br><span class="sub-num">nm</span></th>
+              <th data-sort="speed">Cruise<br><span class="sub-num">kt / Mach</span></th>
+              <th data-sort="ceiling">Ceiling<br><span class="sub-num">FL</span></th>
+              <th data-sort="bfl">Field<br><span class="sub-num">ft</span></th>
+              <th data-sort="cabin">Cabin<br><span class="sub-num">L × H</span></th>
+              <th data-sort="burn">Burn<br><span class="sub-num">gph @ cruise</span></th>
+              <th data-sort="fuelhr">Fuel $/hr<br><span class="sub-num">@ $6.50</span></th>
+              <th data-sort="varhr">Variable $/hr<br><span class="sub-num">fuel + MX + eng</span></th>
+              <th data-sort="prod">Productivity<br><span class="sub-num">seats × kt</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Hourly Cost by Altitude</h2>
+      <div class="chart-controls">
+        <div class="field">
+          <label>Altitude</label>
+          <select id="chart-altitude">
+            <option value="370">FL370</option>
+            <option value="410" selected>FL410</option>
+            <option value="430">FL430</option>
+            <option value="450">FL450</option>
+            <option value="470">FL470</option>
+            <option value="490">FL490</option>
+            <option value="510">FL510</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Fuel Price ($/gal)</label>
+          <input type="number" id="chart-fuel" value="6.50" step="0.05" min="0" />
+        </div>
+        <div class="field">
+          <label>View</label>
+          <select id="chart-mode">
+            <option value="stacked" selected>Stacked breakdown</option>
+            <option value="total">Total only</option>
+            <option value="pernm">Cost per nautical mile</option>
+          </select>
+        </div>
+      </div>
+      <div id="cost-chart" class="cost-chart"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Custom Altitude Comparison</h2>
+      <p style="font-size: 12px; color: var(--muted); margin: -6px 0 14px;">
+        Pick the cruise altitude(s) you'd actually fly each aircraft at. Each selected (aircraft × altitude) becomes a bar in the chart below.
+      </p>
+      <div class="chart-controls">
+        <div class="field">
+          <label>Fuel Price ($/gal)</label>
+          <input type="number" id="custom-fuel" value="6.50" step="0.05" min="0" />
+        </div>
+        <div class="field">
+          <label>View</label>
+          <select id="custom-mode">
+            <option value="stacked" selected>Stacked breakdown</option>
+            <option value="total">Total $/hr only</option>
+            <option value="pernm">$ per nautical mile</option>
+          </select>
+        </div>
+        <button class="btn ghost btn-sm" id="custom-typical">Reset to Typical</button>
+        <button class="btn ghost btn-sm" id="custom-allbands">All Bands</button>
+        <button class="btn ghost btn-sm" id="custom-clear">Clear All</button>
+      </div>
+      <div id="custom-picker" class="alt-picker"></div>
+      <div id="custom-chart" class="cost-chart" style="margin-top: 22px;"></div>
+    </div>
+
+    <div class="footer-note">
+      <strong>Data notes.</strong> Performance specs (cruise, range, ceiling, dimensions, fuel burn) are drawn from manufacturer published figures and B&amp;CA Operations Planning Guide values, typical mid-life examples. Hourly cost components (maintenance reserves, engine reserves) are industry averages from operator surveys and Conklin &amp; de Decker reports — they vary materially by airframe age, MX program enrollment (CAMP/CESCOM/MSP), and operator. Treat these as starting points and verify against your own MX provider and fuel cards.
+      <br><br>
+      <strong>Variable $/hr</strong> = fuel + MX reserves + engine/APU reserves. It excludes crew, hangar, insurance, and amortization. Performance at non-tabulated altitudes is linearly interpolated between the nearest aircraft altitude bands. Aircraft are marked "above ceiling" if the selected altitude exceeds their service ceiling.
+    </div>
+  </section>
+
+  <!-- ============ TRIP CALCULATOR VIEW ============ -->
+  <section class="view" id="view-trip">
+
+    <div class="panel">
+      <h2 class="section-title">Aircraft to Compare</h2>
+      <div class="selector-header">
+        <span class="selector-count" id="selector-count">22 of 22 selected</span>
+        <div class="selector-actions">
+          <button class="btn ghost btn-sm" data-select-action="all">Select All</button>
+          <button class="btn ghost btn-sm" data-select-action="none">Clear</button>
+        </div>
+      </div>
+      <div class="selector-groups" id="aircraft-selector"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Trip Parameters</h2>
+      <div class="calc-grid">
+        <div>
+          <div class="row" style="gap: 18px; align-items: flex-start;">
+            <div class="field typeahead" style="flex: 1;">
+              <label>Origin (ICAO)</label>
+              <input type="text" id="origin" placeholder="KTEB" autocomplete="off" />
+              <div class="typeahead-list" id="origin-list"></div>
+            </div>
+            <div class="field typeahead" style="flex: 1;">
+              <label>Destination (ICAO)</label>
+              <input type="text" id="dest" placeholder="KVNY" autocomplete="off" />
+              <div class="typeahead-list" id="dest-list"></div>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 14px; gap: 18px;">
+            <div class="field" style="flex: 1;">
+              <label>Fuel Price ($/gal)</label>
+              <input type="number" id="fuel-price" value="6.50" step="0.05" min="0" />
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Passengers (optional)</label>
+              <input type="number" id="pax" placeholder="—" min="0" max="20" />
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Min Runway (ft)</label>
+              <input type="number" id="min-rwy" value="4500" step="100" min="3000" />
+            </div>
+          </div>
+          <div style="margin-top: 18px;">
+            <button class="btn" id="calc-btn">Calculate</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">
+            Winds Aloft — Direction (°true wind FROM) &amp; Speed (kt)
+          </label>
+          <div class="wind-grid" id="wind-grid"></div>
+          <div class="wind-actions">
+            <button class="btn btn-sm" id="fetch-winds-btn">Use Today's Winds</button>
+            <button class="btn ghost btn-sm" id="reset-btn">Clear Winds</button>
+          </div>
+          <div class="wind-status" id="wind-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="results-container">
+      <div class="placeholder">
+        Enter origin and destination ICAOs, set fuel price and winds, then press Calculate.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VALUE ESTIMATOR VIEW ============ -->
+  <section class="view" id="view-value">
+    <div class="panel">
+      <h2 class="section-title">Aircraft Value Estimator</h2>
+      <p style="font-size: 12px; color: var(--muted); margin: -6px 0 18px; max-width: 720px;">
+        Pick a model, enter the year and total time. The estimator applies a typical business-jet depreciation curve to the model's new price, then adjusts for hours versus expected utilization (~380 hr/yr). Output is a rough market range, not an appraisal.
+      </p>
+      <div class="val-form">
+        <div class="field">
+          <label>Aircraft Model</label>
+          <select id="val-aircraft">
+            <option value="">Select model…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Year of Manufacture</label>
+          <input type="number" id="val-year" min="1970" max="2030" step="1" placeholder="2015" />
+        </div>
+        <div class="field">
+          <label>Total Time (hours)</label>
+          <input type="number" id="val-hours" min="0" step="100" placeholder="4500" />
+        </div>
+        <button class="btn" id="val-btn">Estimate</button>
+      </div>
+      <div id="val-result"></div>
+    </div>
+
+    <div class="footer-note">
+      <strong>What this includes:</strong> baseline depreciation from new price by age, adjustment for total hours vs typical utilization (~380 hr/yr), and a residual-value floor based on the model's current low market quote.<br><br>
+      <strong>What this does NOT include — and what often matters more:</strong>
+      <ul style="margin: 6px 0 0 18px; padding: 0;">
+        <li>Engine time remaining to overhaul (can swing value $1–4M on heavy jets)</li>
+        <li>MX program enrollment — CAMP, JSSI, MSP, ESP, Corporate Care, etc.</li>
+        <li>APU time remaining</li>
+        <li>FANS 1/A, CPDLC, ADS-B Out, EVS/SVS avionics upgrades</li>
+        <li>Recent paint and interior refurbishment</li>
+        <li>Damage history and 8130-3 trail</li>
+        <li>Lease/finance encumbrances and Part 135 conformity</li>
+      </ul>
+      <br>
+      For real valuation, pull from <strong>Aircraft Bluebook</strong>, <strong>Vref</strong>, <strong>JetNet/AMSTAT</strong>, or commission an <strong>ASA-certified appraisal</strong>.
+    </div>
+  </section>
+
+  <!-- ============ ABOUT VIEW ============ -->
+  <section class="view" id="view-about">
+    <div class="panel about-content">
+      <h2 class="section-title">Notes &amp; Methodology</h2>
+
+      <h3>What this is</h3>
+      <p>An apples-to-apples cost and performance comparator for the J3T fleet survey set: 22 business jets across Dassault, Cessna, Gulfstream, and Bombardier. Two tools — a comparison table for browsing, and a trip calculator that estimates fuel, time, and total trip cost at four cruise altitudes per aircraft, accounting for winds aloft.</p>
+
+      <h3>How costs are computed</h3>
+      <p>Hourly cost is broken into <strong>variable</strong> (per flight hour) components:</p>
+      <ul>
+        <li><strong>Fuel</strong> = burn (gph) × fuel price ($/gal). Burn varies by altitude.</li>
+        <li><strong>MX reserves</strong> = an hourly accrual toward airframe maintenance events, scheduled inspections, and parts replacements.</li>
+        <li><strong>Engine / APU reserves</strong> = hourly accrual toward engine overhauls and APU events. On programs like MSP, ESP, or Corporate Care this becomes a fixed per-hour fee paid to the OEM.</li>
+      </ul>
+      <p>Fixed annual costs (crew, hangar, insurance, training) are not included in the trip calculator since they don't vary with the trip — they amortize against your annual hours. Add roughly $1,500–$3,000 per hour depending on aircraft size and annual utilization if you want a true all-in number.</p>
+
+      <h3>Trip math</h3>
+      <p>Distance is great-circle (haversine) between the two ICAOs. Initial bearing is used to resolve the wind at each cruise altitude into a headwind/tailwind component:</p>
+      <p><code>headwind = wind_speed × cos(wind_from_direction − route_bearing)</code></p>
+      <p>Ground speed = TAS − headwind. Block time = (distance ÷ ground speed) + 0.3 hr taxi/climb/descent overhead. Fuel and reserves accrue against block time.</p>
+
+      <h3>Nonstop feasibility</h3>
+      <p>An aircraft is flagged <strong>nonstop</strong> when great-circle distance ≤ its published NBAA-IFR range. Real-world fuel planning trims this further for weather, weight, alternates, and reserves — treat the boolean as "in the ballpark," not as a dispatch decision.</p>
+
+      <h3>Wind altitude bands</h3>
+      <p>Winds are entered at the eight standard winds-aloft levels for jets: <code>FL180, FL240, FL300, FL340, FL370, FL410, FL450, FL510</code>. Each aircraft's altitude band uses the nearest entered layer.</p>
+
+      <h3>Data sources &amp; confidence</h3>
+      <ul>
+        <li><strong>Performance specs</strong> — manufacturer type certificate data sheets, AFM/POH performance tables, and Aviation Week aircraft surveys. High confidence.</li>
+        <li><strong>Fuel burn</strong> — published long-range and high-speed cruise figures. High confidence at typical-cruise altitude; less precise at extreme altitudes.</li>
+        <li><strong>Hourly costs</strong> — B&amp;CA Operations Planning Guide (annual) and Conklin &amp; de Decker model reports. Medium confidence — figures shift year-over-year and vary materially by operator. Verify against your MX provider and fuel cards before quoting.</li>
+        <li><strong>Older variants</strong> (Challenger 600, Falcon 2000DX, 900DX) have thinner public cost data than current-production aircraft. Numbers are conservative estimates.</li>
+      </ul>
+
+      <h3>Aircraft included</h3>
+      <ul>
+        <li><strong>Dassault</strong>: Falcon 50, Falcon 2000 (DX/EX/LXS), Falcon 900 (DX/EX/LX)</li>
+        <li><strong>Cessna Citation</strong>: V/Ultra (560), XLS+, Sovereign (680), Sovereign+, Latitude, X, X+</li>
+        <li><strong>Gulfstream</strong>: GIV, GV, G280, G450, G500 (GV-SP derivative, 2003–2008), G500 (clean-sheet, 2018+), G550</li>
+        <li><strong>Bombardier Challenger</strong>: 600, 601, 350</li>
+        <li><strong>Embraer</strong>: Praetor 500, Praetor 600, Legacy 600, Legacy 650</li>
+        <li><strong>Hawker</strong>: 900XP</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   AIRCRAFT DATABASE
+   Edit values below. Numbers reflect typical mid-life specs.
+   altitude_bands: tas in kt true airspeed, burn in US gallons/hr.
+   variable_per_hour fields exclude fuel (fuel is computed at runtime).
+============================================================ */
+
+const AIRCRAFT = [
+  {
+    id: "falcon-50", name: "Falcon 50", manufacturer: "Dassault", category: "midsize",
+    year_intro: 1979, seats: 9, max_seats: 10, crew: 2,
+    ceiling_fl: 490, typical_fl: 410, mtow_lbs: 18740,
+    range_nm: 3000, bfl_ft: 4500, baggage_cuft: 115,
+    cabin: { length_ft: 23.6, width_ft: 6.1, height_ft: 5.9 },
+    lavatory: "enclosed", engines: "3× Honeywell TFE731-3",
+    altitude_bands: [
+      { fl: 370, tas: 430, burn: 240 },
+      { fl: 410, tas: 425, burn: 215 },
+      { fl: 450, tas: 415, burn: 195 },
+      { fl: 490, tas: 405, burn: 180 }
+    ],
+    mx_per_hour: 880, engine_per_hour: 650,
+    acquisition: { low: 1800000, high: 3500000 }
+  },
+  {
+    id: "citation-560", name: "Citation V / Ultra (560)", manufacturer: "Cessna", category: "light",
+    year_intro: 1989, seats: 8, max_seats: 9, crew: 2,
+    ceiling_fl: 450, typical_fl: 410, mtow_lbs: 16300,
+    range_nm: 1950, bfl_ft: 3260, baggage_cuft: 73,
+    cabin: { length_ft: 17.3, width_ft: 4.8, height_ft: 4.7 },
+    lavatory: "enclosed", engines: "2× P&W JT15D-5D / PW545A",
+    altitude_bands: [
+      { fl: 300, tas: 380, burn: 195 },
+      { fl: 370, tas: 425, burn: 155 },
+      { fl: 410, tas: 425, burn: 140 },
+      { fl: 450, tas: 415, burn: 130 }
+    ],
+    mx_per_hour: 520, engine_per_hour: 420,
+    acquisition: { low: 1100000, high: 2400000 }
+  },
+  {
+    id: "citation-xls", name: "Citation XLS+", manufacturer: "Cessna", category: "midsize",
+    year_intro: 2008, seats: 8, max_seats: 9, crew: 2,
+    ceiling_fl: 450, typical_fl: 410, mtow_lbs: 20200,
+    range_nm: 2100, bfl_ft: 3560, baggage_cuft: 80,
+    cabin: { length_ft: 18.5, width_ft: 5.5, height_ft: 5.7 },
+    lavatory: "enclosed", engines: "2× P&W PW545C",
+    altitude_bands: [
+      { fl: 300, tas: 410, burn: 220 },
+      { fl: 370, tas: 440, burn: 180 },
+      { fl: 410, tas: 441, burn: 170 },
+      { fl: 450, tas: 425, burn: 155 }
+    ],
+    mx_per_hour: 580, engine_per_hour: 480,
+    acquisition: { low: 4500000, high: 9000000 }
+  },
+  {
+    id: "citation-latitude", name: "Citation Latitude (680A)", manufacturer: "Cessna", category: "midsize",
+    year_intro: 2015, seats: 9, max_seats: 9, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 30800,
+    range_nm: 2700, bfl_ft: 3580, baggage_cuft: 127,
+    cabin: { length_ft: 21.9, width_ft: 6.5, height_ft: 6.0 },
+    lavatory: "enclosed", engines: "2× P&W PW306D1",
+    altitude_bands: [
+      { fl: 300, tas: 430, burn: 280 },
+      { fl: 370, tas: 446, burn: 230 },
+      { fl: 410, tas: 446, burn: 210 },
+      { fl: 450, tas: 430, burn: 195 }
+    ],
+    mx_per_hour: 680, engine_per_hour: 540,
+    acquisition: { low: 11000000, high: 19000000 }
+  },
+  {
+    id: "citation-x", name: "Citation X (750)", manufacturer: "Cessna", category: "super-mid",
+    year_intro: 1996, seats: 9, max_seats: 12, crew: 2,
+    ceiling_fl: 510, typical_fl: 430, mtow_lbs: 36100,
+    range_nm: 3070, bfl_ft: 5140, baggage_cuft: 82,
+    cabin: { length_ft: 25.3, width_ft: 5.5, height_ft: 5.7 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce AE 3007C1",
+    altitude_bands: [
+      { fl: 370, tas: 510, burn: 360 },
+      { fl: 430, tas: 528, burn: 305 },
+      { fl: 470, tas: 522, burn: 275 },
+      { fl: 510, tas: 500, burn: 250 }
+    ],
+    mx_per_hour: 920, engine_per_hour: 780,
+    acquisition: { low: 5500000, high: 11000000 }
+  },
+  {
+    id: "citation-x-plus", name: "Citation X+", manufacturer: "Cessna", category: "super-mid",
+    year_intro: 2014, seats: 9, max_seats: 12, crew: 2,
+    ceiling_fl: 510, typical_fl: 470, mtow_lbs: 36600,
+    range_nm: 3460, bfl_ft: 5250, baggage_cuft: 82,
+    cabin: { length_ft: 26.3, width_ft: 5.5, height_ft: 5.7 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce AE 3007C2",
+    altitude_bands: [
+      { fl: 370, tas: 515, burn: 355 },
+      { fl: 430, tas: 535, burn: 295 },
+      { fl: 470, tas: 528, burn: 265 },
+      { fl: 510, tas: 510, burn: 240 }
+    ],
+    mx_per_hour: 950, engine_per_hour: 810,
+    acquisition: { low: 14000000, high: 22000000 }
+  },
+  {
+    id: "gulfstream-g280", name: "Gulfstream G280", manufacturer: "Gulfstream", category: "super-mid",
+    year_intro: 2012, seats: 10, max_seats: 10, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 39600,
+    range_nm: 3600, bfl_ft: 4750, baggage_cuft: 120,
+    cabin: { length_ft: 25.8, width_ft: 7.2, height_ft: 6.3 },
+    lavatory: "enclosed", engines: "2× Honeywell HTF7250G",
+    altitude_bands: [
+      { fl: 370, tas: 459, burn: 295 },
+      { fl: 410, tas: 472, burn: 255 },
+      { fl: 430, tas: 472, burn: 240 },
+      { fl: 450, tas: 459, burn: 225 }
+    ],
+    mx_per_hour: 760, engine_per_hour: 640,
+    acquisition: { low: 13000000, high: 21000000 }
+  },
+  {
+    id: "challenger-600", name: "Challenger 600", manufacturer: "Bombardier", category: "heavy",
+    year_intro: 1980, seats: 9, max_seats: 12, crew: 2,
+    ceiling_fl: 410, typical_fl: 370, mtow_lbs: 41250,
+    range_nm: 2790, bfl_ft: 5840, baggage_cuft: 115,
+    cabin: { length_ft: 25.4, width_ft: 8.2, height_ft: 6.1 },
+    lavatory: "enclosed", engines: "2× Lycoming ALF 502L",
+    altitude_bands: [
+      { fl: 280, tas: 410, burn: 390 },
+      { fl: 340, tas: 440, burn: 345 },
+      { fl: 370, tas: 448, burn: 320 },
+      { fl: 410, tas: 432, burn: 295 }
+    ],
+    mx_per_hour: 1100, engine_per_hour: 880,
+    acquisition: { low: 800000, high: 2200000 }
+  },
+  {
+    id: "challenger-601", name: "Challenger 601", manufacturer: "Bombardier", category: "heavy",
+    year_intro: 1983, seats: 10, max_seats: 12, crew: 2,
+    ceiling_fl: 410, typical_fl: 410, mtow_lbs: 45100,
+    range_nm: 3500, bfl_ft: 6080, baggage_cuft: 115,
+    cabin: { length_ft: 25.4, width_ft: 8.2, height_ft: 6.1 },
+    lavatory: "enclosed", engines: "2× GE CF34-3A/3B",
+    altitude_bands: [
+      { fl: 280, tas: 425, burn: 360 },
+      { fl: 340, tas: 450, burn: 305 },
+      { fl: 370, tas: 459, burn: 285 },
+      { fl: 410, tas: 442, burn: 260 }
+    ],
+    mx_per_hour: 1000, engine_per_hour: 780,
+    acquisition: { low: 1500000, high: 3800000 }
+  },
+  {
+    id: "challenger-350", name: "Challenger 350", manufacturer: "Bombardier", category: "super-mid",
+    year_intro: 2014, seats: 9, max_seats: 10, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 40600,
+    range_nm: 3200, bfl_ft: 4835, baggage_cuft: 106,
+    cabin: { length_ft: 28.6, width_ft: 7.2, height_ft: 6.1 },
+    lavatory: "enclosed", engines: "2× Honeywell HTF7350",
+    altitude_bands: [
+      { fl: 370, tas: 459, burn: 285 },
+      { fl: 410, tas: 470, burn: 250 },
+      { fl: 430, tas: 470, burn: 235 },
+      { fl: 450, tas: 459, burn: 220 }
+    ],
+    mx_per_hour: 740, engine_per_hour: 620,
+    acquisition: { low: 14000000, high: 22000000 }
+  },
+  {
+    id: "falcon-2000dx", name: "Falcon 2000DX", manufacturer: "Dassault", category: "heavy",
+    year_intro: 2007, seats: 8, max_seats: 10, crew: 2,
+    ceiling_fl: 470, typical_fl: 410, mtow_lbs: 41000,
+    range_nm: 3250, bfl_ft: 5300, baggage_cuft: 134,
+    cabin: { length_ft: 26.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× P&W PW308C",
+    altitude_bands: [
+      { fl: 370, tas: 460, burn: 290 },
+      { fl: 410, tas: 470, burn: 250 },
+      { fl: 430, tas: 470, burn: 235 },
+      { fl: 470, tas: 450, burn: 215 }
+    ],
+    mx_per_hour: 820, engine_per_hour: 660,
+    acquisition: { low: 9000000, high: 14000000 }
+  },
+  {
+    id: "falcon-2000ex", name: "Falcon 2000EX", manufacturer: "Dassault", category: "heavy",
+    year_intro: 2003, seats: 8, max_seats: 10, crew: 2,
+    ceiling_fl: 470, typical_fl: 410, mtow_lbs: 41000,
+    range_nm: 3800, bfl_ft: 5125, baggage_cuft: 134,
+    cabin: { length_ft: 26.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× P&W PW308C",
+    altitude_bands: [
+      { fl: 370, tas: 462, burn: 285 },
+      { fl: 410, tas: 472, burn: 248 },
+      { fl: 430, tas: 472, burn: 232 },
+      { fl: 470, tas: 452, burn: 212 }
+    ],
+    mx_per_hour: 830, engine_per_hour: 670,
+    acquisition: { low: 9500000, high: 15500000 }
+  },
+  {
+    id: "falcon-2000lxs", name: "Falcon 2000LXS", manufacturer: "Dassault", category: "heavy",
+    year_intro: 2014, seats: 10, max_seats: 12, crew: 2,
+    ceiling_fl: 470, typical_fl: 410, mtow_lbs: 42800,
+    range_nm: 4000, bfl_ft: 4675, baggage_cuft: 134,
+    cabin: { length_ft: 26.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× P&W PW308C",
+    altitude_bands: [
+      { fl: 370, tas: 462, burn: 280 },
+      { fl: 410, tas: 472, burn: 245 },
+      { fl: 430, tas: 472, burn: 230 },
+      { fl: 470, tas: 452, burn: 210 }
+    ],
+    mx_per_hour: 850, engine_per_hour: 680,
+    acquisition: { low: 17000000, high: 25000000 }
+  },
+  {
+    id: "falcon-900dx", name: "Falcon 900DX", manufacturer: "Dassault", category: "heavy",
+    year_intro: 2005, seats: 12, max_seats: 14, crew: 2,
+    ceiling_fl: 510, typical_fl: 410, mtow_lbs: 46500,
+    range_nm: 4100, bfl_ft: 5215, baggage_cuft: 127,
+    cabin: { length_ft: 33.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "3× Honeywell TFE731-60",
+    altitude_bands: [
+      { fl: 370, tas: 470, burn: 360 },
+      { fl: 410, tas: 480, burn: 320 },
+      { fl: 450, tas: 470, burn: 290 },
+      { fl: 490, tas: 455, burn: 270 }
+    ],
+    mx_per_hour: 1020, engine_per_hour: 880,
+    acquisition: { low: 12000000, high: 18000000 }
+  },
+  {
+    id: "falcon-900ex", name: "Falcon 900EX", manufacturer: "Dassault", category: "heavy",
+    year_intro: 1995, seats: 12, max_seats: 14, crew: 2,
+    ceiling_fl: 510, typical_fl: 410, mtow_lbs: 49000,
+    range_nm: 4500, bfl_ft: 5020, baggage_cuft: 127,
+    cabin: { length_ft: 33.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "3× Honeywell TFE731-60",
+    altitude_bands: [
+      { fl: 370, tas: 472, burn: 360 },
+      { fl: 410, tas: 482, burn: 318 },
+      { fl: 450, tas: 472, burn: 290 },
+      { fl: 490, tas: 455, burn: 270 }
+    ],
+    mx_per_hour: 1020, engine_per_hour: 880,
+    acquisition: { low: 9000000, high: 16000000 }
+  },
+  {
+    id: "falcon-900lx", name: "Falcon 900LX", manufacturer: "Dassault", category: "heavy",
+    year_intro: 2010, seats: 12, max_seats: 14, crew: 2,
+    ceiling_fl: 510, typical_fl: 410, mtow_lbs: 49000,
+    range_nm: 4750, bfl_ft: 5360, baggage_cuft: 127,
+    cabin: { length_ft: 33.2, width_ft: 7.7, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "3× Honeywell TFE731-60",
+    altitude_bands: [
+      { fl: 370, tas: 474, burn: 355 },
+      { fl: 410, tas: 484, burn: 315 },
+      { fl: 450, tas: 474, burn: 287 },
+      { fl: 490, tas: 456, burn: 268 }
+    ],
+    mx_per_hour: 1040, engine_per_hour: 900,
+    acquisition: { low: 22000000, high: 32000000 }
+  },
+  {
+    id: "gulfstream-giv", name: "Gulfstream IV (GIV / GIV-SP)", manufacturer: "Gulfstream", category: "heavy",
+    year_intro: 1987, seats: 13, max_seats: 19, crew: 2,
+    ceiling_fl: 450, typical_fl: 410, mtow_lbs: 74600,
+    range_nm: 4220, bfl_ft: 5450, baggage_cuft: 169,
+    cabin: { length_ft: 45.1, width_ft: 7.3, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce Tay 611-8",
+    altitude_bands: [
+      { fl: 370, tas: 459, burn: 480 },
+      { fl: 410, tas: 459, burn: 420 },
+      { fl: 430, tas: 450, burn: 395 },
+      { fl: 450, tas: 435, burn: 375 }
+    ],
+    mx_per_hour: 1180, engine_per_hour: 960,
+    acquisition: { low: 2200000, high: 7500000 }
+  },
+  {
+    id: "gulfstream-g450", name: "Gulfstream G450", manufacturer: "Gulfstream", category: "heavy",
+    year_intro: 2005, seats: 14, max_seats: 19, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 74600,
+    range_nm: 4350, bfl_ft: 5600, baggage_cuft: 169,
+    cabin: { length_ft: 45.2, width_ft: 7.3, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce Tay 611-8C",
+    altitude_bands: [
+      { fl: 370, tas: 476, burn: 460 },
+      { fl: 410, tas: 488, burn: 400 },
+      { fl: 430, tas: 484, burn: 380 },
+      { fl: 450, tas: 470, burn: 360 }
+    ],
+    mx_per_hour: 1180, engine_per_hour: 960,
+    acquisition: { low: 11000000, high: 20000000 }
+  },
+  {
+    id: "gulfstream-gv", name: "Gulfstream V (GV)", manufacturer: "Gulfstream", category: "ultra-long",
+    year_intro: 1997, seats: 14, max_seats: 19, crew: 2,
+    ceiling_fl: 510, typical_fl: 450, mtow_lbs: 90500,
+    range_nm: 6500, bfl_ft: 5150, baggage_cuft: 226,
+    cabin: { length_ft: 50.1, width_ft: 7.4, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce BR710A1",
+    altitude_bands: [
+      { fl: 370, tas: 488, burn: 470 },
+      { fl: 410, tas: 488, burn: 410 },
+      { fl: 450, tas: 478, burn: 370 },
+      { fl: 510, tas: 459, burn: 340 }
+    ],
+    mx_per_hour: 1240, engine_per_hour: 1080,
+    acquisition: { low: 6500000, high: 16000000 }
+  },
+  {
+    id: "gulfstream-g500-old", name: "Gulfstream G500 (GV-SP, 2003)", manufacturer: "Gulfstream", category: "ultra-long",
+    year_intro: 2003, seats: 14, max_seats: 19, crew: 2,
+    ceiling_fl: 510, typical_fl: 450, mtow_lbs: 85100,
+    range_nm: 5800, bfl_ft: 5150, baggage_cuft: 226,
+    cabin: { length_ft: 50.1, width_ft: 7.3, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce BR710C4-11 (derated)",
+    altitude_bands: [
+      { fl: 370, tas: 488, burn: 460 },
+      { fl: 410, tas: 488, burn: 400 },
+      { fl: 450, tas: 478, burn: 365 },
+      { fl: 510, tas: 459, burn: 335 }
+    ],
+    mx_per_hour: 1240, engine_per_hour: 1080,
+    acquisition: { low: 9000000, high: 18000000 }
+  },
+  {
+    id: "gulfstream-g500-new", name: "Gulfstream G500 (2018)", manufacturer: "Gulfstream", category: "ultra-long",
+    year_intro: 2018, seats: 13, max_seats: 19, crew: 2,
+    ceiling_fl: 510, typical_fl: 430, mtow_lbs: 80000,
+    range_nm: 5300, bfl_ft: 5200, baggage_cuft: 175,
+    cabin: { length_ft: 41.5, width_ft: 7.6, height_ft: 6.3 },
+    lavatory: "enclosed", engines: "2× P&W PW814GA",
+    altitude_bands: [
+      { fl: 370, tas: 488, burn: 380 },
+      { fl: 430, tas: 516, burn: 330 },
+      { fl: 470, tas: 510, burn: 300 },
+      { fl: 510, tas: 488, burn: 275 }
+    ],
+    mx_per_hour: 1180, engine_per_hour: 1020,
+    acquisition: { low: 32000000, high: 47000000 }
+  },
+  {
+    id: "gulfstream-g550", name: "Gulfstream G550", manufacturer: "Gulfstream", category: "ultra-long",
+    year_intro: 2003, seats: 14, max_seats: 19, crew: 2,
+    ceiling_fl: 510, typical_fl: 450, mtow_lbs: 91000,
+    range_nm: 6750, bfl_ft: 5910, baggage_cuft: 226,
+    cabin: { length_ft: 50.1, width_ft: 7.3, height_ft: 6.2 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce BR710C4-11",
+    altitude_bands: [
+      { fl: 370, tas: 488, burn: 455 },
+      { fl: 410, tas: 488, burn: 395 },
+      { fl: 450, tas: 482, burn: 360 },
+      { fl: 510, tas: 459, burn: 330 }
+    ],
+    mx_per_hour: 1280, engine_per_hour: 1100,
+    acquisition: { low: 14000000, high: 28000000 }
+  },
+  {
+    id: "citation-sovereign", name: "Citation Sovereign (680)", manufacturer: "Cessna", category: "midsize",
+    year_intro: 2004, seats: 8, max_seats: 12, crew: 2,
+    ceiling_fl: 470, typical_fl: 430, mtow_lbs: 30300,
+    range_nm: 2847, bfl_ft: 3810, baggage_cuft: 100,
+    cabin: { length_ft: 25.3, width_ft: 5.5, height_ft: 5.7 },
+    lavatory: "enclosed", engines: "2× P&W PW306C",
+    altitude_bands: [
+      { fl: 300, tas: 420, burn: 260 },
+      { fl: 370, tas: 458, burn: 215 },
+      { fl: 430, tas: 458, burn: 195 },
+      { fl: 470, tas: 440, burn: 180 }
+    ],
+    mx_per_hour: 640, engine_per_hour: 520,
+    acquisition: { low: 4500000, high: 9500000 }
+  },
+  {
+    id: "citation-sovereign-plus", name: "Citation Sovereign+", manufacturer: "Cessna", category: "midsize",
+    year_intro: 2014, seats: 9, max_seats: 12, crew: 2,
+    ceiling_fl: 470, typical_fl: 430, mtow_lbs: 30775,
+    range_nm: 3200, bfl_ft: 3530, baggage_cuft: 135,
+    cabin: { length_ft: 25.3, width_ft: 5.5, height_ft: 5.7 },
+    lavatory: "enclosed", engines: "2× P&W PW306D",
+    altitude_bands: [
+      { fl: 300, tas: 425, burn: 255 },
+      { fl: 370, tas: 460, burn: 210 },
+      { fl: 430, tas: 460, burn: 190 },
+      { fl: 470, tas: 440, burn: 175 }
+    ],
+    mx_per_hour: 660, engine_per_hour: 540,
+    acquisition: { low: 11000000, high: 17000000 }
+  },
+  {
+    id: "embraer-praetor-500", name: "Praetor 500", manufacturer: "Embraer", category: "super-mid",
+    year_intro: 2019, seats: 7, max_seats: 9, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 37567,
+    range_nm: 3340, bfl_ft: 4222, baggage_cuft: 155,
+    cabin: { length_ft: 24.0, width_ft: 6.8, height_ft: 6.0 },
+    lavatory: "enclosed", engines: "2× Honeywell HTF7500E",
+    altitude_bands: [
+      { fl: 370, tas: 459, burn: 280 },
+      { fl: 410, tas: 466, burn: 245 },
+      { fl: 430, tas: 466, burn: 230 },
+      { fl: 450, tas: 455, burn: 215 }
+    ],
+    mx_per_hour: 720, engine_per_hour: 600,
+    acquisition: { low: 13500000, high: 18000000 }
+  },
+  {
+    id: "embraer-praetor-600", name: "Praetor 600", manufacturer: "Embraer", category: "super-mid",
+    year_intro: 2019, seats: 8, max_seats: 12, crew: 2,
+    ceiling_fl: 450, typical_fl: 430, mtow_lbs: 42858,
+    range_nm: 4018, bfl_ft: 4717, baggage_cuft: 155,
+    cabin: { length_ft: 27.3, width_ft: 6.8, height_ft: 6.0 },
+    lavatory: "enclosed", engines: "2× Honeywell HTF7500E",
+    altitude_bands: [
+      { fl: 370, tas: 459, burn: 295 },
+      { fl: 410, tas: 466, burn: 260 },
+      { fl: 430, tas: 466, burn: 245 },
+      { fl: 450, tas: 455, burn: 230 }
+    ],
+    mx_per_hour: 760, engine_per_hour: 640,
+    acquisition: { low: 17000000, high: 22000000 }
+  },
+  {
+    id: "embraer-legacy-600", name: "Legacy 600", manufacturer: "Embraer", category: "heavy",
+    year_intro: 2002, seats: 13, max_seats: 14, crew: 2,
+    ceiling_fl: 410, typical_fl: 370, mtow_lbs: 49604,
+    range_nm: 3400, bfl_ft: 5328, baggage_cuft: 240,
+    cabin: { length_ft: 42.6, width_ft: 6.9, height_ft: 6.0 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce AE 3007/A1",
+    altitude_bands: [
+      { fl: 280, tas: 415, burn: 380 },
+      { fl: 340, tas: 440, burn: 345 },
+      { fl: 370, tas: 450, burn: 320 },
+      { fl: 410, tas: 435, burn: 290 }
+    ],
+    mx_per_hour: 1080, engine_per_hour: 880,
+    acquisition: { low: 5500000, high: 12000000 }
+  },
+  {
+    id: "embraer-legacy-650", name: "Legacy 650", manufacturer: "Embraer", category: "heavy",
+    year_intro: 2010, seats: 13, max_seats: 14, crew: 2,
+    ceiling_fl: 410, typical_fl: 370, mtow_lbs: 53572,
+    range_nm: 3900, bfl_ft: 5820, baggage_cuft: 240,
+    cabin: { length_ft: 42.6, width_ft: 6.9, height_ft: 6.0 },
+    lavatory: "enclosed", engines: "2× Rolls-Royce AE 3007/A2",
+    altitude_bands: [
+      { fl: 280, tas: 418, burn: 380 },
+      { fl: 340, tas: 442, burn: 345 },
+      { fl: 370, tas: 450, burn: 320 },
+      { fl: 410, tas: 435, burn: 290 }
+    ],
+    mx_per_hour: 1080, engine_per_hour: 880,
+    acquisition: { low: 12000000, high: 22000000 }
+  },
+  {
+    id: "hawker-900xp", name: "Hawker 900XP", manufacturer: "Hawker", category: "midsize",
+    year_intro: 2008, seats: 8, max_seats: 9, crew: 2,
+    ceiling_fl: 410, typical_fl: 410, mtow_lbs: 28000,
+    range_nm: 2818, bfl_ft: 5032, baggage_cuft: 50,
+    cabin: { length_ft: 21.3, width_ft: 6.0, height_ft: 5.8 },
+    lavatory: "enclosed", engines: "2× Honeywell TFE731-50R",
+    altitude_bands: [
+      { fl: 280, tas: 430, burn: 280 },
+      { fl: 340, tas: 445, burn: 250 },
+      { fl: 370, tas: 448, burn: 235 },
+      { fl: 410, tas: 445, burn: 215 }
+    ],
+    mx_per_hour: 700, engine_per_hour: 580,
+    acquisition: { low: 2000000, high: 4500000 }
+  }
+];
+
+/* ============================================================
+   AIRPORT DATABASE
+   ICAO, name, city, country, lat, lon, longest paved runway (ft).
+   Curated for business jet operations:
+     • USA + Canada + Caribbean comprehensive
+     • Major business/private jet airports per country worldwide
+   Runway lengths are longest hard-surface runway.
+============================================================ */
+
+const AIRPORTS = [
+  // --- USA: Northeast ---
+  { icao: "KTEB", name: "Teterboro", city: "Teterboro, NJ", country: "US", lat: 40.8501, lon: -74.0608, rwy: 7000 },
+  { icao: "KHPN", name: "Westchester County", city: "White Plains, NY", country: "US", lat: 41.0670, lon: -73.7076, rwy: 6549 },
+  { icao: "KJFK", name: "John F. Kennedy Intl", city: "New York, NY", country: "US", lat: 40.6398, lon: -73.7789, rwy: 14511 },
+  { icao: "KLGA", name: "LaGuardia", city: "New York, NY", country: "US", lat: 40.7772, lon: -73.8726, rwy: 7003 },
+  { icao: "KEWR", name: "Newark Liberty Intl", city: "Newark, NJ", country: "US", lat: 40.6925, lon: -74.1687, rwy: 11000 },
+  { icao: "KBED", name: "Hanscom Field", city: "Bedford, MA", country: "US", lat: 42.4700, lon: -71.2890, rwy: 7011 },
+  { icao: "KBOS", name: "Boston Logan", city: "Boston, MA", country: "US", lat: 42.3656, lon: -71.0096, rwy: 10083 },
+  { icao: "KPVD", name: "T.F. Green", city: "Providence, RI", country: "US", lat: 41.7240, lon: -71.4283, rwy: 8700 },
+  { icao: "KBDL", name: "Bradley Intl", city: "Hartford, CT", country: "US", lat: 41.9389, lon: -72.6832, rwy: 9510 },
+  { icao: "KDCA", name: "Reagan National", city: "Washington, DC", country: "US", lat: 38.8521, lon: -77.0377, rwy: 7169 },
+  { icao: "KIAD", name: "Washington Dulles", city: "Washington, DC", country: "US", lat: 38.9445, lon: -77.4558, rwy: 11500 },
+  { icao: "KBWI", name: "Baltimore-Washington Intl", city: "Baltimore, MD", country: "US", lat: 39.1754, lon: -76.6683, rwy: 10502 },
+  { icao: "KPHL", name: "Philadelphia Intl", city: "Philadelphia, PA", country: "US", lat: 39.8729, lon: -75.2437, rwy: 12000 },
+  { icao: "KFRG", name: "Republic", city: "Farmingdale, NY", country: "US", lat: 40.7288, lon: -73.4134, rwy: 6827 },
+  { icao: "KISP", name: "Long Island MacArthur", city: "Islip, NY", country: "US", lat: 40.7952, lon: -73.1002, rwy: 7001 },
+  { icao: "KMMU", name: "Morristown Muni", city: "Morristown, NJ", country: "US", lat: 40.7995, lon: -74.4148, rwy: 5999 },
+  { icao: "KFOK", name: "Francis S. Gabreski", city: "Westhampton Beach, NY", country: "US", lat: 40.8438, lon: -72.6318, rwy: 9000 },
+  { icao: "KMVY", name: "Martha's Vineyard", city: "Vineyard Haven, MA", country: "US", lat: 41.3931, lon: -70.6143, rwy: 5500 },
+  { icao: "KACK", name: "Nantucket Memorial", city: "Nantucket, MA", country: "US", lat: 41.2531, lon: -70.0602, rwy: 6303 },
+
+  // --- USA: Southeast ---
+  { icao: "KATL", name: "Hartsfield–Jackson", city: "Atlanta, GA", country: "US", lat: 33.6367, lon: -84.4281, rwy: 12390 },
+  { icao: "KPDK", name: "DeKalb-Peachtree", city: "Atlanta, GA", country: "US", lat: 33.8757, lon: -84.3019, rwy: 6001 },
+  { icao: "KFTY", name: "Fulton County / Brown Field", city: "Atlanta, GA", country: "US", lat: 33.7790, lon: -84.5214, rwy: 5796 },
+  { icao: "KMIA", name: "Miami Intl", city: "Miami, FL", country: "US", lat: 25.7932, lon: -80.2906, rwy: 13016 },
+  { icao: "KOPF", name: "Miami-Opa Locka Executive", city: "Opa-locka, FL", country: "US", lat: 25.9070, lon: -80.2784, rwy: 8002 },
+  { icao: "KTMB", name: "Miami Executive", city: "Miami, FL", country: "US", lat: 25.6479, lon: -80.4328, rwy: 5002 },
+  { icao: "KFLL", name: "Fort Lauderdale–Hollywood", city: "Fort Lauderdale, FL", country: "US", lat: 26.0726, lon: -80.1527, rwy: 9000 },
+  { icao: "KFXE", name: "Fort Lauderdale Executive", city: "Fort Lauderdale, FL", country: "US", lat: 26.1973, lon: -80.1707, rwy: 6001 },
+  { icao: "KPBI", name: "Palm Beach Intl", city: "West Palm Beach, FL", country: "US", lat: 26.6832, lon: -80.0956, rwy: 10001 },
+  { icao: "KBCT", name: "Boca Raton", city: "Boca Raton, FL", country: "US", lat: 26.3785, lon: -80.1077, rwy: 6276 },
+  { icao: "KMCO", name: "Orlando Intl", city: "Orlando, FL", country: "US", lat: 28.4294, lon: -81.3089, rwy: 12005 },
+  { icao: "KORL", name: "Orlando Executive", city: "Orlando, FL", country: "US", lat: 28.5455, lon: -81.3329, rwy: 6004 },
+  { icao: "KAPF", name: "Naples Muni", city: "Naples, FL", country: "US", lat: 26.1526, lon: -81.7752, rwy: 6600 },
+  { icao: "KSRQ", name: "Sarasota-Bradenton", city: "Sarasota, FL", country: "US", lat: 27.3954, lon: -82.5544, rwy: 9500 },
+  { icao: "KTPA", name: "Tampa Intl", city: "Tampa, FL", country: "US", lat: 27.9755, lon: -82.5332, rwy: 11002 },
+  { icao: "KPIE", name: "St. Petersburg–Clearwater", city: "St. Petersburg, FL", country: "US", lat: 27.9102, lon: -82.6874, rwy: 8500 },
+  { icao: "KJAX", name: "Jacksonville Intl", city: "Jacksonville, FL", country: "US", lat: 30.4941, lon: -81.6879, rwy: 10000 },
+  { icao: "KCLT", name: "Charlotte Douglas", city: "Charlotte, NC", country: "US", lat: 35.2140, lon: -80.9431, rwy: 10000 },
+  { icao: "KRDU", name: "Raleigh-Durham", city: "Raleigh, NC", country: "US", lat: 35.8776, lon: -78.7875, rwy: 10000 },
+  { icao: "KCHS", name: "Charleston Intl", city: "Charleston, SC", country: "US", lat: 32.8987, lon: -80.0405, rwy: 9001 },
+  { icao: "KHHH", name: "Hilton Head", city: "Hilton Head, SC", country: "US", lat: 32.2244, lon: -80.6973, rwy: 4300 },
+  { icao: "KSAV", name: "Savannah/Hilton Head", city: "Savannah, GA", country: "US", lat: 32.1276, lon: -81.2021, rwy: 9351 },
+
+  // --- USA: Midwest ---
+  { icao: "KORD", name: "O'Hare Intl", city: "Chicago, IL", country: "US", lat: 41.9786, lon: -87.9048, rwy: 13000 },
+  { icao: "KMDW", name: "Chicago Midway", city: "Chicago, IL", country: "US", lat: 41.7868, lon: -87.7524, rwy: 6522 },
+  { icao: "KPWK", name: "Chicago Executive", city: "Wheeling, IL", country: "US", lat: 42.1142, lon: -87.9015, rwy: 5001 },
+  { icao: "KDPA", name: "DuPage", city: "West Chicago, IL", country: "US", lat: 41.9078, lon: -88.2486, rwy: 7570 },
+  { icao: "KDET", name: "Coleman A. Young Muni", city: "Detroit, MI", country: "US", lat: 42.4093, lon: -83.0099, rwy: 5090 },
+  { icao: "KDTW", name: "Detroit Metropolitan", city: "Detroit, MI", country: "US", lat: 42.2124, lon: -83.3534, rwy: 12001 },
+  { icao: "KPTK", name: "Oakland County Intl", city: "Pontiac, MI", country: "US", lat: 42.6655, lon: -83.4200, rwy: 6520 },
+  { icao: "KMKE", name: "Milwaukee Mitchell", city: "Milwaukee, WI", country: "US", lat: 42.9472, lon: -87.8966, rwy: 9690 },
+  { icao: "KMSP", name: "Minneapolis-St. Paul", city: "Minneapolis, MN", country: "US", lat: 44.8820, lon: -93.2218, rwy: 11006 },
+  { icao: "KFCM", name: "Flying Cloud", city: "Minneapolis, MN", country: "US", lat: 44.8275, lon: -93.4571, rwy: 5000 },
+  { icao: "KSTL", name: "St. Louis Lambert", city: "St. Louis, MO", country: "US", lat: 38.7487, lon: -90.3700, rwy: 11019 },
+  { icao: "KMCI", name: "Kansas City Intl", city: "Kansas City, MO", country: "US", lat: 39.2976, lon: -94.7139, rwy: 10802 },
+  { icao: "KCLE", name: "Cleveland Hopkins", city: "Cleveland, OH", country: "US", lat: 41.4117, lon: -81.8498, rwy: 9956 },
+  { icao: "KCMH", name: "John Glenn Columbus", city: "Columbus, OH", country: "US", lat: 39.9980, lon: -82.8919, rwy: 10250 },
+  { icao: "KCVG", name: "Cincinnati/N. Kentucky", city: "Cincinnati, OH", country: "US", lat: 39.0488, lon: -84.6678, rwy: 12000 },
+  { icao: "KIND", name: "Indianapolis Intl", city: "Indianapolis, IN", country: "US", lat: 39.7173, lon: -86.2944, rwy: 11200 },
+
+  // --- USA: South-Central ---
+  { icao: "KDFW", name: "Dallas/Fort Worth", city: "Dallas, TX", country: "US", lat: 32.8998, lon: -97.0403, rwy: 13401 },
+  { icao: "KDAL", name: "Dallas Love Field", city: "Dallas, TX", country: "US", lat: 32.8471, lon: -96.8518, rwy: 8800 },
+  { icao: "KADS", name: "Addison", city: "Addison, TX", country: "US", lat: 32.9686, lon: -96.8364, rwy: 7203 },
+  { icao: "KIAH", name: "George Bush Intercontinental", city: "Houston, TX", country: "US", lat: 29.9844, lon: -95.3414, rwy: 12001 },
+  { icao: "KHOU", name: "Houston Hobby", city: "Houston, TX", country: "US", lat: 29.6454, lon: -95.2789, rwy: 7602 },
+  { icao: "KSGR", name: "Sugar Land Regional", city: "Sugar Land, TX", country: "US", lat: 29.6223, lon: -95.6566, rwy: 8000 },
+  { icao: "KAUS", name: "Austin-Bergstrom", city: "Austin, TX", country: "US", lat: 30.1945, lon: -97.6699, rwy: 12250 },
+  { icao: "KSAT", name: "San Antonio Intl", city: "San Antonio, TX", country: "US", lat: 29.5337, lon: -98.4698, rwy: 8505 },
+  { icao: "KMSY", name: "Louis Armstrong New Orleans", city: "New Orleans, LA", country: "US", lat: 29.9934, lon: -90.2580, rwy: 10104 },
+  { icao: "KBNA", name: "Nashville Intl", city: "Nashville, TN", country: "US", lat: 36.1245, lon: -86.6782, rwy: 11030 },
+  { icao: "KMEM", name: "Memphis Intl", city: "Memphis, TN", country: "US", lat: 35.0424, lon: -89.9767, rwy: 11120 },
+  { icao: "KOKC", name: "Will Rogers OKC", city: "Oklahoma City, OK", country: "US", lat: 35.3931, lon: -97.6007, rwy: 9802 },
+  { icao: "KTUL", name: "Tulsa Intl", city: "Tulsa, OK", country: "US", lat: 36.1984, lon: -95.8881, rwy: 10000 },
+
+  // --- USA: West / Mountain ---
+  { icao: "KDEN", name: "Denver Intl", city: "Denver, CO", country: "US", lat: 39.8617, lon: -104.6732, rwy: 16000 },
+  { icao: "KAPA", name: "Centennial", city: "Denver, CO", country: "US", lat: 39.5701, lon: -104.8492, rwy: 10001 },
+  { icao: "KASE", name: "Aspen-Pitkin County", city: "Aspen, CO", country: "US", lat: 39.2232, lon: -106.8688, rwy: 8006 },
+  { icao: "KEGE", name: "Eagle County Regional", city: "Eagle, CO", country: "US", lat: 39.6426, lon: -106.9177, rwy: 9000 },
+  { icao: "KTEX", name: "Telluride Regional", city: "Telluride, CO", country: "US", lat: 37.9538, lon: -107.9085, rwy: 7111 },
+  { icao: "KRIL", name: "Garfield County Regional", city: "Rifle, CO", country: "US", lat: 39.5263, lon: -107.7268, rwy: 7000 },
+  { icao: "KJAC", name: "Jackson Hole", city: "Jackson, WY", country: "US", lat: 43.6073, lon: -110.7378, rwy: 6451 },
+  { icao: "KSUN", name: "Friedman Memorial", city: "Sun Valley, ID", country: "US", lat: 43.5044, lon: -114.2956, rwy: 7550 },
+  { icao: "KBZN", name: "Bozeman Yellowstone", city: "Bozeman, MT", country: "US", lat: 45.7775, lon: -111.1530, rwy: 9003 },
+  { icao: "KSLC", name: "Salt Lake City Intl", city: "Salt Lake City, UT", country: "US", lat: 40.7884, lon: -111.9778, rwy: 12003 },
+  { icao: "KPVU", name: "Provo Muni", city: "Provo, UT", country: "US", lat: 40.2192, lon: -111.7234, rwy: 8600 },
+  { icao: "KPHX", name: "Phoenix Sky Harbor", city: "Phoenix, AZ", country: "US", lat: 33.4343, lon: -112.0117, rwy: 11489 },
+  { icao: "KSDL", name: "Scottsdale", city: "Scottsdale, AZ", country: "US", lat: 33.6228, lon: -111.9105, rwy: 8249 },
+  { icao: "KTUS", name: "Tucson Intl", city: "Tucson, AZ", country: "US", lat: 32.1161, lon: -110.9410, rwy: 10996 },
+  { icao: "KLAS", name: "Harry Reid Intl", city: "Las Vegas, NV", country: "US", lat: 36.0840, lon: -115.1537, rwy: 14512 },
+  { icao: "KVGT", name: "North Las Vegas", city: "Las Vegas, NV", country: "US", lat: 36.2107, lon: -115.1944, rwy: 5009 },
+  { icao: "KHND", name: "Henderson Executive", city: "Henderson, NV", country: "US", lat: 35.9728, lon: -115.1339, rwy: 6501 },
+
+  // --- USA: West Coast ---
+  { icao: "KLAX", name: "Los Angeles Intl", city: "Los Angeles, CA", country: "US", lat: 33.9425, lon: -118.4081, rwy: 12091 },
+  { icao: "KVNY", name: "Van Nuys", city: "Los Angeles, CA", country: "US", lat: 34.2098, lon: -118.4900, rwy: 8001 },
+  { icao: "KBUR", name: "Hollywood Burbank", city: "Burbank, CA", country: "US", lat: 34.2007, lon: -118.3585, rwy: 6886 },
+  { icao: "KSMO", name: "Santa Monica", city: "Santa Monica, CA", country: "US", lat: 34.0158, lon: -118.4513, rwy: 4973 },
+  { icao: "KSNA", name: "John Wayne Orange County", city: "Santa Ana, CA", country: "US", lat: 33.6757, lon: -117.8682, rwy: 5701 },
+  { icao: "KLGB", name: "Long Beach", city: "Long Beach, CA", country: "US", lat: 33.8177, lon: -118.1516, rwy: 10000 },
+  { icao: "KCRQ", name: "McClellan-Palomar", city: "Carlsbad, CA", country: "US", lat: 33.1283, lon: -117.2802, rwy: 4897 },
+  { icao: "KSAN", name: "San Diego Intl", city: "San Diego, CA", country: "US", lat: 32.7338, lon: -117.1933, rwy: 9401 },
+  { icao: "KMYF", name: "Montgomery-Gibbs Executive", city: "San Diego, CA", country: "US", lat: 32.8157, lon: -117.1396, rwy: 4577 },
+  { icao: "KSBA", name: "Santa Barbara", city: "Santa Barbara, CA", country: "US", lat: 34.4262, lon: -119.8403, rwy: 6049 },
+  { icao: "KMRY", name: "Monterey Regional", city: "Monterey, CA", country: "US", lat: 36.5870, lon: -121.8430, rwy: 7616 },
+  { icao: "KSFO", name: "San Francisco Intl", city: "San Francisco, CA", country: "US", lat: 37.6189, lon: -122.3750, rwy: 11870 },
+  { icao: "KSJC", name: "San Jose Intl", city: "San Jose, CA", country: "US", lat: 37.3626, lon: -121.9290, rwy: 11000 },
+  { icao: "KOAK", name: "Oakland Intl", city: "Oakland, CA", country: "US", lat: 37.7213, lon: -122.2208, rwy: 10520 },
+  { icao: "KHWD", name: "Hayward Executive", city: "Hayward, CA", country: "US", lat: 37.6592, lon: -122.1226, rwy: 5694 },
+  { icao: "KPAO", name: "Palo Alto", city: "Palo Alto, CA", country: "US", lat: 37.4612, lon: -122.1150, rwy: 2443 },
+  { icao: "KSCK", name: "Stockton Metropolitan", city: "Stockton, CA", country: "US", lat: 37.8942, lon: -121.2386, rwy: 10650 },
+  { icao: "KSMF", name: "Sacramento Intl", city: "Sacramento, CA", country: "US", lat: 38.6954, lon: -121.5908, rwy: 8605 },
+  { icao: "KRNO", name: "Reno-Tahoe", city: "Reno, NV", country: "US", lat: 39.4991, lon: -119.7681, rwy: 11002 },
+  { icao: "KTVL", name: "Lake Tahoe", city: "South Lake Tahoe, CA", country: "US", lat: 38.8939, lon: -119.9956, rwy: 8541 },
+  { icao: "KPDX", name: "Portland Intl", city: "Portland, OR", country: "US", lat: 45.5887, lon: -122.5975, rwy: 11000 },
+  { icao: "KHIO", name: "Hillsboro", city: "Hillsboro, OR", country: "US", lat: 45.5404, lon: -122.9498, rwy: 6600 },
+  { icao: "KSEA", name: "Seattle-Tacoma", city: "Seattle, WA", country: "US", lat: 47.4502, lon: -122.3088, rwy: 11900 },
+  { icao: "KBFI", name: "Boeing Field", city: "Seattle, WA", country: "US", lat: 47.5300, lon: -122.3019, rwy: 10007 },
+  { icao: "KPAE", name: "Snohomish County (Paine)", city: "Everett, WA", country: "US", lat: 47.9063, lon: -122.2816, rwy: 9010 },
+
+  // --- USA: Alaska & Hawaii ---
+  { icao: "PANC", name: "Ted Stevens Anchorage", city: "Anchorage, AK", country: "US", lat: 61.1744, lon: -149.9961, rwy: 12400 },
+  { icao: "PHNL", name: "Honolulu (Daniel K. Inouye)", city: "Honolulu, HI", country: "US", lat: 21.3187, lon: -157.9224, rwy: 12000 },
+  { icao: "PHOG", name: "Kahului", city: "Maui, HI", country: "US", lat: 20.8986, lon: -156.4305, rwy: 6995 },
+  { icao: "PHKO", name: "Ellison Onizuka Kona Intl", city: "Kona, HI", country: "US", lat: 19.7388, lon: -156.0456, rwy: 11000 },
+  { icao: "PHTO", name: "Hilo Intl", city: "Hilo, HI", country: "US", lat: 19.7214, lon: -155.0485, rwy: 9800 },
+  { icao: "PHLI", name: "Lihue", city: "Kauai, HI", country: "US", lat: 21.9760, lon: -159.3389, rwy: 6500 },
+
+  // --- Canada ---
+  { icao: "CYYZ", name: "Toronto Pearson", city: "Toronto, ON", country: "CA", lat: 43.6772, lon: -79.6306, rwy: 11120 },
+  { icao: "CYTZ", name: "Billy Bishop Toronto City", city: "Toronto, ON", country: "CA", lat: 43.6275, lon: -79.3963, rwy: 3988 },
+  { icao: "CYKZ", name: "Buttonville Muni", city: "Toronto, ON", country: "CA", lat: 43.8622, lon: -79.3700, rwy: 5000 },
+  { icao: "CYUL", name: "Montréal–Trudeau", city: "Montréal, QC", country: "CA", lat: 45.4706, lon: -73.7408, rwy: 11000 },
+  { icao: "CYHU", name: "Saint-Hubert", city: "Montréal, QC", country: "CA", lat: 45.5175, lon: -73.4169, rwy: 7800 },
+  { icao: "CYOW", name: "Ottawa Macdonald-Cartier", city: "Ottawa, ON", country: "CA", lat: 45.3225, lon: -75.6692, rwy: 10000 },
+  { icao: "CYQB", name: "Québec City Jean Lesage", city: "Québec City, QC", country: "CA", lat: 46.7911, lon: -71.3933, rwy: 9000 },
+  { icao: "CYHZ", name: "Halifax Stanfield", city: "Halifax, NS", country: "CA", lat: 44.8808, lon: -63.5086, rwy: 10500 },
+  { icao: "CYWG", name: "Winnipeg Richardson", city: "Winnipeg, MB", country: "CA", lat: 49.9100, lon: -97.2399, rwy: 11000 },
+  { icao: "CYYC", name: "Calgary Intl", city: "Calgary, AB", country: "CA", lat: 51.1138, lon: -114.0203, rwy: 14000 },
+  { icao: "CYEG", name: "Edmonton Intl", city: "Edmonton, AB", country: "CA", lat: 53.3097, lon: -113.5800, rwy: 11000 },
+  { icao: "CYVR", name: "Vancouver Intl", city: "Vancouver, BC", country: "CA", lat: 49.1939, lon: -123.1844, rwy: 11500 },
+  { icao: "CYXX", name: "Abbotsford Intl", city: "Abbotsford, BC", country: "CA", lat: 49.0252, lon: -122.3608, rwy: 9600 },
+  { icao: "CYYJ", name: "Victoria Intl", city: "Victoria, BC", country: "CA", lat: 48.6469, lon: -123.4258, rwy: 7000 },
+  { icao: "CYLW", name: "Kelowna Intl", city: "Kelowna, BC", country: "CA", lat: 49.9561, lon: -119.3778, rwy: 8900 },
+  { icao: "CYYT", name: "St. John's Intl", city: "St. John's, NL", country: "CA", lat: 47.6186, lon: -52.7519, rwy: 8500 },
+
+  // --- Caribbean & Bermuda ---
+  { icao: "MYNN", name: "Lynden Pindling Intl", city: "Nassau", country: "BS", lat: 25.0390, lon: -77.4663, rwy: 11000 },
+  { icao: "MYGF", name: "Grand Bahama Intl", city: "Freeport", country: "BS", lat: 26.5587, lon: -78.6956, rwy: 11000 },
+  { icao: "MYEH", name: "North Eleuthera", city: "North Eleuthera", country: "BS", lat: 25.4748, lon: -76.6835, rwy: 4500 },
+  { icao: "MYAK", name: "Congo Town", city: "Andros", country: "BS", lat: 24.1582, lon: -77.5895, rwy: 6500 },
+  { icao: "MYEX", name: "Exuma Intl", city: "George Town", country: "BS", lat: 23.5626, lon: -75.8779, rwy: 7000 },
+  { icao: "TXKF", name: "L.F. Wade Intl", city: "Bermuda", country: "BM", lat: 32.3640, lon: -64.6787, rwy: 9713 },
+  { icao: "MUHA", name: "José Martí Intl", city: "Havana", country: "CU", lat: 22.9892, lon: -82.4091, rwy: 13123 },
+  { icao: "MDPC", name: "Punta Cana Intl", city: "Punta Cana", country: "DO", lat: 18.5674, lon: -68.3634, rwy: 10171 },
+  { icao: "MDSD", name: "Las Américas Intl", city: "Santo Domingo", country: "DO", lat: 18.4297, lon: -69.6689, rwy: 11942 },
+  { icao: "MDST", name: "Cibao Intl", city: "Santiago", country: "DO", lat: 19.4061, lon: -70.6047, rwy: 8530 },
+  { icao: "MDLR", name: "La Romana Intl", city: "La Romana", country: "DO", lat: 18.4507, lon: -68.9117, rwy: 9836 },
+  { icao: "TJSJ", name: "Luis Muñoz Marín Intl", city: "San Juan", country: "PR", lat: 18.4394, lon: -66.0018, rwy: 10002 },
+  { icao: "TJBQ", name: "Aguadilla / Rafael Hernández", city: "Aguadilla", country: "PR", lat: 18.4949, lon: -67.1294, rwy: 11702 },
+  { icao: "MWCR", name: "Owen Roberts Intl", city: "Grand Cayman", country: "KY", lat: 19.2929, lon: -81.3577, rwy: 7000 },
+  { icao: "MKJS", name: "Sangster Intl", city: "Montego Bay", country: "JM", lat: 18.5037, lon: -77.9134, rwy: 8716 },
+  { icao: "MKJP", name: "Norman Manley Intl", city: "Kingston", country: "JM", lat: 17.9357, lon: -76.7875, rwy: 8859 },
+  { icao: "MUVR", name: "Juan Gualberto Gómez", city: "Varadero", country: "CU", lat: 23.0344, lon: -81.4353, rwy: 11483 },
+  { icao: "MZBZ", name: "Philip S.W. Goldson", city: "Belize City", country: "BZ", lat: 17.5391, lon: -88.3082, rwy: 9000 },
+  { icao: "TIST", name: "Cyril E. King", city: "St. Thomas", country: "VI", lat: 18.3373, lon: -64.9734, rwy: 7000 },
+  { icao: "TISX", name: "Henry E. Rohlsen", city: "St. Croix", country: "VI", lat: 17.7019, lon: -64.7986, rwy: 10000 },
+  { icao: "TKPK", name: "Robert L. Bradshaw", city: "Basseterre", country: "KN", lat: 17.3112, lon: -62.7187, rwy: 7999 },
+  { icao: "TFFR", name: "Pointe-à-Pitre", city: "Guadeloupe", country: "GP", lat: 16.2653, lon: -61.5318, rwy: 11499 },
+  { icao: "TFFF", name: "Martinique Aimé Césaire", city: "Fort-de-France", country: "MQ", lat: 14.5910, lon: -61.0032, rwy: 10827 },
+  { icao: "TLPL", name: "Hewanorra Intl", city: "St. Lucia", country: "LC", lat: 13.7332, lon: -60.9526, rwy: 9000 },
+  { icao: "TGPY", name: "Maurice Bishop Intl", city: "Grenada", country: "GD", lat: 12.0042, lon: -61.7862, rwy: 9003 },
+  { icao: "TVSV", name: "Argyle Intl", city: "St. Vincent", country: "VC", lat: 13.1567, lon: -61.1500, rwy: 9000 },
+  { icao: "TBPB", name: "Grantley Adams Intl", city: "Bridgetown", country: "BB", lat: 13.0746, lon: -59.4925, rwy: 11000 },
+  { icao: "TTPP", name: "Piarco Intl", city: "Port of Spain", country: "TT", lat: 10.5954, lon: -61.3372, rwy: 10500 },
+  { icao: "TNCM", name: "Princess Juliana Intl", city: "St. Maarten", country: "SX", lat: 18.0410, lon: -63.1089, rwy: 7546 },
+  { icao: "TNCA", name: "Queen Beatrix Intl", city: "Aruba", country: "AW", lat: 12.5014, lon: -70.0152, rwy: 9000 },
+  { icao: "TNCC", name: "Curaçao Hato Intl", city: "Willemstad", country: "CW", lat: 12.1889, lon: -68.9598, rwy: 11188 },
+
+  // --- Mexico ---
+  { icao: "MMMX", name: "Mexico City Intl", city: "Mexico City", country: "MX", lat: 19.4363, lon: -99.0721, rwy: 13123 },
+  { icao: "MMTO", name: "Toluca Intl", city: "Toluca", country: "MX", lat: 19.3370, lon: -99.5660, rwy: 13780 },
+  { icao: "MMUN", name: "Cancún Intl", city: "Cancún", country: "MX", lat: 21.0365, lon: -86.8771, rwy: 11483 },
+  { icao: "MMSD", name: "Los Cabos Intl", city: "San José del Cabo", country: "MX", lat: 23.1518, lon: -109.7211, rwy: 10171 },
+  { icao: "MMPR", name: "Puerto Vallarta", city: "Puerto Vallarta", country: "MX", lat: 20.6801, lon: -105.2544, rwy: 10171 },
+  { icao: "MMMY", name: "Monterrey Intl", city: "Monterrey", country: "MX", lat: 25.7785, lon: -100.1067, rwy: 9842 },
+  { icao: "MMGL", name: "Guadalajara Intl", city: "Guadalajara", country: "MX", lat: 20.5218, lon: -103.3111, rwy: 13123 },
+
+  // --- Central America ---
+  { icao: "MROC", name: "Juan Santamaría", city: "San José", country: "CR", lat: 9.9939, lon: -84.2088, rwy: 10000 },
+  { icao: "MRLB", name: "Liberia Daniel Oduber", city: "Liberia", country: "CR", lat: 10.5933, lon: -85.5444, rwy: 9100 },
+  { icao: "MPTO", name: "Tocumen Intl", city: "Panama City", country: "PA", lat: 9.0714, lon: -79.3835, rwy: 10006 },
+
+  // --- South America ---
+  { icao: "SKBO", name: "El Dorado Intl", city: "Bogotá", country: "CO", lat: 4.7016, lon: -74.1469, rwy: 12467 },
+  { icao: "SKCG", name: "Rafael Núñez", city: "Cartagena", country: "CO", lat: 10.4424, lon: -75.5130, rwy: 8530 },
+  { icao: "SEQM", name: "Mariscal Sucre", city: "Quito", country: "EC", lat: -0.1292, lon: -78.3575, rwy: 13468 },
+  { icao: "SPJC", name: "Jorge Chávez Intl", city: "Lima", country: "PE", lat: -12.0219, lon: -77.1143, rwy: 11506 },
+  { icao: "SCEL", name: "Arturo Merino Benítez", city: "Santiago", country: "CL", lat: -33.3930, lon: -70.7858, rwy: 12894 },
+  { icao: "SAEZ", name: "Ezeiza Ministro Pistarini", city: "Buenos Aires", country: "AR", lat: -34.8222, lon: -58.5358, rwy: 10827 },
+  { icao: "SBSP", name: "São Paulo Congonhas", city: "São Paulo", country: "BR", lat: -23.6261, lon: -46.6564, rwy: 6362 },
+  { icao: "SBGR", name: "Guarulhos Intl", city: "São Paulo", country: "BR", lat: -23.4356, lon: -46.4731, rwy: 12139 },
+  { icao: "SBJD", name: "Jundiaí", city: "São Paulo / Jundiaí", country: "BR", lat: -23.1815, lon: -46.9442, rwy: 5249 },
+  { icao: "SBGL", name: "Rio Galeão", city: "Rio de Janeiro", country: "BR", lat: -22.8100, lon: -43.2506, rwy: 13123 },
+  { icao: "SUMU", name: "Carrasco Intl", city: "Montevideo", country: "UY", lat: -34.8384, lon: -56.0308, rwy: 10828 },
+  { icao: "SVMI", name: "Simón Bolívar Intl", city: "Caracas", country: "VE", lat: 10.6013, lon: -66.9911, rwy: 11483 },
+
+  // --- Europe: UK & Ireland ---
+  { icao: "EGLL", name: "Heathrow", city: "London", country: "GB", lat: 51.4700, lon: -0.4543, rwy: 12802 },
+  { icao: "EGKK", name: "Gatwick", city: "London", country: "GB", lat: 51.1481, lon: -0.1903, rwy: 10879 },
+  { icao: "EGGW", name: "Luton", city: "London", country: "GB", lat: 51.8747, lon: -0.3683, rwy: 7087 },
+  { icao: "EGSS", name: "Stansted", city: "London", country: "GB", lat: 51.8850, lon: 0.2350, rwy: 10003 },
+  { icao: "EGLF", name: "Farnborough", city: "Farnborough", country: "GB", lat: 51.2758, lon: -0.7763, rwy: 8005 },
+  { icao: "EGKB", name: "London Biggin Hill", city: "London", country: "GB", lat: 51.3308, lon: 0.0325, rwy: 5932 },
+  { icao: "EGGP", name: "John Lennon", city: "Liverpool", country: "GB", lat: 53.3336, lon: -2.8497, rwy: 7503 },
+  { icao: "EGCC", name: "Manchester", city: "Manchester", country: "GB", lat: 53.3537, lon: -2.2750, rwy: 10000 },
+  { icao: "EGPH", name: "Edinburgh", city: "Edinburgh", country: "GB", lat: 55.9500, lon: -3.3725, rwy: 8400 },
+  { icao: "EGPF", name: "Glasgow", city: "Glasgow", country: "GB", lat: 55.8717, lon: -4.4332, rwy: 8720 },
+  { icao: "EIDW", name: "Dublin", city: "Dublin", country: "IE", lat: 53.4213, lon: -6.2701, rwy: 10499 },
+  { icao: "EICK", name: "Cork", city: "Cork", country: "IE", lat: 51.8413, lon: -8.4911, rwy: 7218 },
+
+  // --- Europe: France & Benelux ---
+  { icao: "LFPG", name: "Charles de Gaulle", city: "Paris", country: "FR", lat: 49.0097, lon: 2.5479, rwy: 13829 },
+  { icao: "LFPB", name: "Paris-Le Bourget", city: "Paris", country: "FR", lat: 48.9694, lon: 2.4414, rwy: 9843 },
+  { icao: "LFPO", name: "Paris Orly", city: "Paris", country: "FR", lat: 48.7233, lon: 2.3794, rwy: 11975 },
+  { icao: "LFMN", name: "Nice Côte d'Azur", city: "Nice", country: "FR", lat: 43.6584, lon: 7.2159, rwy: 9711 },
+  { icao: "LFMD", name: "Cannes Mandelieu", city: "Cannes", country: "FR", lat: 43.5420, lon: 6.9534, rwy: 5249 },
+  { icao: "LFML", name: "Marseille Provence", city: "Marseille", country: "FR", lat: 43.4393, lon: 5.2214, rwy: 11483 },
+  { icao: "LFLL", name: "Lyon-Saint Exupéry", city: "Lyon", country: "FR", lat: 45.7256, lon: 5.0811, rwy: 13123 },
+  { icao: "LFST", name: "Strasbourg", city: "Strasbourg", country: "FR", lat: 48.5383, lon: 7.6282, rwy: 7874 },
+  { icao: "LFBO", name: "Toulouse-Blagnac", city: "Toulouse", country: "FR", lat: 43.6294, lon: 1.3638, rwy: 11483 },
+  { icao: "EBBR", name: "Brussels", city: "Brussels", country: "BE", lat: 50.9014, lon: 4.4844, rwy: 11936 },
+  { icao: "EHAM", name: "Schiphol", city: "Amsterdam", country: "NL", lat: 52.3086, lon: 4.7639, rwy: 12467 },
+  { icao: "EHRD", name: "Rotterdam The Hague", city: "Rotterdam", country: "NL", lat: 51.9569, lon: 4.4372, rwy: 7218 },
+  { icao: "ELLX", name: "Luxembourg", city: "Luxembourg", country: "LU", lat: 49.6233, lon: 6.2044, rwy: 13123 },
+
+  // --- Europe: Germany, Switzerland, Austria ---
+  { icao: "EDDF", name: "Frankfurt", city: "Frankfurt", country: "DE", lat: 50.0379, lon: 8.5622, rwy: 13123 },
+  { icao: "EDDM", name: "Munich", city: "Munich", country: "DE", lat: 48.3538, lon: 11.7861, rwy: 13123 },
+  { icao: "EDDB", name: "Berlin Brandenburg", city: "Berlin", country: "DE", lat: 52.3667, lon: 13.5033, rwy: 13123 },
+  { icao: "EDDH", name: "Hamburg", city: "Hamburg", country: "DE", lat: 53.6304, lon: 9.9882, rwy: 12028 },
+  { icao: "EDDS", name: "Stuttgart", city: "Stuttgart", country: "DE", lat: 48.6900, lon: 9.2219, rwy: 10827 },
+  { icao: "EDDL", name: "Düsseldorf", city: "Düsseldorf", country: "DE", lat: 51.2895, lon: 6.7668, rwy: 9842 },
+  { icao: "EDNY", name: "Friedrichshafen", city: "Friedrichshafen", country: "DE", lat: 47.6713, lon: 9.5114, rwy: 7546 },
+  { icao: "LSGG", name: "Genève Cointrin", city: "Geneva", country: "CH", lat: 46.2381, lon: 6.1090, rwy: 12992 },
+  { icao: "LSZH", name: "Zürich", city: "Zürich", country: "CH", lat: 47.4647, lon: 8.5492, rwy: 12139 },
+  { icao: "LSZS", name: "Samedan", city: "St. Moritz", country: "CH", lat: 46.5340, lon: 9.8842, rwy: 5906 },
+  { icao: "LOWW", name: "Vienna Intl", city: "Vienna", country: "AT", lat: 48.1103, lon: 16.5697, rwy: 11811 },
+  { icao: "LOWS", name: "Salzburg", city: "Salzburg", country: "AT", lat: 47.7933, lon: 13.0043, rwy: 9022 },
+  { icao: "LOWI", name: "Innsbruck", city: "Innsbruck", country: "AT", lat: 47.2602, lon: 11.3439, rwy: 6562 },
+
+  // --- Europe: Iberia & Italy ---
+  { icao: "LEMD", name: "Madrid-Barajas", city: "Madrid", country: "ES", lat: 40.4719, lon: -3.5626, rwy: 14272 },
+  { icao: "LEBL", name: "Barcelona-El Prat", city: "Barcelona", country: "ES", lat: 41.2974, lon: 2.0833, rwy: 11532 },
+  { icao: "LEMG", name: "Málaga", city: "Málaga", country: "ES", lat: 36.6749, lon: -4.4991, rwy: 10499 },
+  { icao: "LEPA", name: "Palma de Mallorca", city: "Palma", country: "ES", lat: 39.5517, lon: 2.7388, rwy: 10827 },
+  { icao: "LEIB", name: "Ibiza", city: "Ibiza", country: "ES", lat: 38.8728, lon: 1.3731, rwy: 9186 },
+  { icao: "LPPT", name: "Humberto Delgado", city: "Lisbon", country: "PT", lat: 38.7813, lon: -9.1359, rwy: 12484 },
+  { icao: "LPPR", name: "Porto", city: "Porto", country: "PT", lat: 41.2481, lon: -8.6814, rwy: 11483 },
+  { icao: "LIRF", name: "Rome Fiumicino", city: "Rome", country: "IT", lat: 41.8003, lon: 12.2389, rwy: 12795 },
+  { icao: "LIRA", name: "Rome Ciampino", city: "Rome", country: "IT", lat: 41.7994, lon: 12.5949, rwy: 7218 },
+  { icao: "LIMC", name: "Milan Malpensa", city: "Milan", country: "IT", lat: 45.6306, lon: 8.7281, rwy: 12867 },
+  { icao: "LIML", name: "Milan Linate", city: "Milan", country: "IT", lat: 45.4451, lon: 9.2767, rwy: 9183 },
+  { icao: "LIPZ", name: "Venice Marco Polo", city: "Venice", country: "IT", lat: 45.5053, lon: 12.3519, rwy: 10827 },
+  { icao: "LIRN", name: "Naples", city: "Naples", country: "IT", lat: 40.8860, lon: 14.2908, rwy: 7546 },
+  { icao: "LIEO", name: "Olbia Costa Smeralda", city: "Olbia", country: "IT", lat: 40.8987, lon: 9.5176, rwy: 8366 },
+
+  // --- Europe: Nordics, Eastern Europe ---
+  { icao: "EKCH", name: "Copenhagen Kastrup", city: "Copenhagen", country: "DK", lat: 55.6181, lon: 12.6561, rwy: 11811 },
+  { icao: "ESSA", name: "Stockholm Arlanda", city: "Stockholm", country: "SE", lat: 59.6519, lon: 17.9186, rwy: 10833 },
+  { icao: "ENGM", name: "Oslo Gardermoen", city: "Oslo", country: "NO", lat: 60.1976, lon: 11.1004, rwy: 11811 },
+  { icao: "EFHK", name: "Helsinki-Vantaa", city: "Helsinki", country: "FI", lat: 60.3172, lon: 24.9633, rwy: 11286 },
+  { icao: "BIKF", name: "Keflavík", city: "Reykjavík", country: "IS", lat: 63.9850, lon: -22.6056, rwy: 10056 },
+  { icao: "EPWA", name: "Warsaw Chopin", city: "Warsaw", country: "PL", lat: 52.1657, lon: 20.9671, rwy: 12106 },
+  { icao: "LKPR", name: "Prague Václav Havel", city: "Prague", country: "CZ", lat: 50.1008, lon: 14.2632, rwy: 12188 },
+  { icao: "LHBP", name: "Budapest Liszt Ferenc", city: "Budapest", country: "HU", lat: 47.4369, lon: 19.2556, rwy: 12162 },
+  { icao: "LROP", name: "Bucharest Otopeni", city: "Bucharest", country: "RO", lat: 44.5722, lon: 26.1022, rwy: 11483 },
+  { icao: "LBSF", name: "Sofia", city: "Sofia", country: "BG", lat: 42.6967, lon: 23.4114, rwy: 11155 },
+  { icao: "LGAV", name: "Athens Eleftherios Venizelos", city: "Athens", country: "GR", lat: 37.9364, lon: 23.9445, rwy: 13123 },
+  { icao: "LTBA", name: "Istanbul Atatürk (closed)", city: "Istanbul", country: "TR", lat: 40.9769, lon: 28.8146, rwy: 13780 },
+  { icao: "LTFM", name: "Istanbul New", city: "Istanbul", country: "TR", lat: 41.2753, lon: 28.7519, rwy: 13780 },
+  { icao: "UUWW", name: "Vnukovo", city: "Moscow", country: "RU", lat: 55.5915, lon: 37.2614, rwy: 10039 },
+  { icao: "UUEE", name: "Sheremetyevo", city: "Moscow", country: "RU", lat: 55.9728, lon: 37.4147, rwy: 12139 },
+
+  // --- Middle East & North Africa ---
+  { icao: "OMDB", name: "Dubai Intl", city: "Dubai", country: "AE", lat: 25.2528, lon: 55.3644, rwy: 13123 },
+  { icao: "OMDW", name: "Dubai Al Maktoum", city: "Dubai", country: "AE", lat: 24.8965, lon: 55.1614, rwy: 14600 },
+  { icao: "OMAA", name: "Abu Dhabi Intl", city: "Abu Dhabi", country: "AE", lat: 24.4330, lon: 54.6511, rwy: 13451 },
+  { icao: "OTHH", name: "Hamad Intl", city: "Doha", country: "QA", lat: 25.2731, lon: 51.6080, rwy: 15912 },
+  { icao: "OBBI", name: "Bahrain Intl", city: "Manama", country: "BH", lat: 26.2708, lon: 50.6336, rwy: 12996 },
+  { icao: "OEJN", name: "King Abdulaziz Intl", city: "Jeddah", country: "SA", lat: 21.6796, lon: 39.1565, rwy: 13123 },
+  { icao: "OERK", name: "King Khalid Intl", city: "Riyadh", country: "SA", lat: 24.9576, lon: 46.6988, rwy: 13796 },
+  { icao: "LLBG", name: "Ben Gurion", city: "Tel Aviv", country: "IL", lat: 32.0114, lon: 34.8867, rwy: 11998 },
+  { icao: "HECA", name: "Cairo Intl", city: "Cairo", country: "EG", lat: 30.1219, lon: 31.4056, rwy: 13124 },
+  { icao: "GMMN", name: "Mohammed V Intl", city: "Casablanca", country: "MA", lat: 33.3675, lon: -7.5897, rwy: 11814 },
+  { icao: "GMMX", name: "Marrakech Menara", city: "Marrakech", country: "MA", lat: 31.6069, lon: -8.0363, rwy: 10171 },
+
+  // --- Sub-Saharan Africa ---
+  { icao: "FAJS", name: "O.R. Tambo", city: "Johannesburg", country: "ZA", lat: -26.1392, lon: 28.2460, rwy: 14495 },
+  { icao: "FACT", name: "Cape Town Intl", city: "Cape Town", country: "ZA", lat: -33.9648, lon: 18.6017, rwy: 10502 },
+  { icao: "HKJK", name: "Jomo Kenyatta Intl", city: "Nairobi", country: "KE", lat: -1.3192, lon: 36.9278, rwy: 13507 },
+  { icao: "DNMM", name: "Murtala Muhammed", city: "Lagos", country: "NG", lat: 6.5774, lon: 3.3212, rwy: 12795 },
+  { icao: "FIMP", name: "Sir Seewoosagur Ramgoolam", city: "Mauritius", country: "MU", lat: -20.4302, lon: 57.6836, rwy: 10171 },
+
+  // --- Asia ---
+  { icao: "VIDP", name: "Indira Gandhi Intl", city: "Delhi", country: "IN", lat: 28.5562, lon: 77.1000, rwy: 14534 },
+  { icao: "VABB", name: "Chhatrapati Shivaji", city: "Mumbai", country: "IN", lat: 19.0887, lon: 72.8679, rwy: 11447 },
+  { icao: "VOBL", name: "Kempegowda Intl", city: "Bengaluru", country: "IN", lat: 13.1986, lon: 77.7066, rwy: 13123 },
+  { icao: "VTBS", name: "Suvarnabhumi", city: "Bangkok", country: "TH", lat: 13.6900, lon: 100.7501, rwy: 13123 },
+  { icao: "VTBD", name: "Don Mueang", city: "Bangkok", country: "TH", lat: 13.9126, lon: 100.6068, rwy: 12139 },
+  { icao: "VHHH", name: "Hong Kong Intl", city: "Hong Kong", country: "HK", lat: 22.3080, lon: 113.9185, rwy: 12467 },
+  { icao: "VMMC", name: "Macau Intl", city: "Macau", country: "MO", lat: 22.1496, lon: 113.5921, rwy: 11155 },
+  { icao: "WSSS", name: "Changi", city: "Singapore", country: "SG", lat: 1.3592, lon: 103.9894, rwy: 13124 },
+  { icao: "WSSL", name: "Seletar", city: "Singapore", country: "SG", lat: 1.4170, lon: 103.8675, rwy: 6017 },
+  { icao: "WMKK", name: "Kuala Lumpur Intl", city: "Kuala Lumpur", country: "MY", lat: 2.7456, lon: 101.7099, rwy: 13288 },
+  { icao: "WIII", name: "Soekarno–Hatta", city: "Jakarta", country: "ID", lat: -6.1256, lon: 106.6559, rwy: 12008 },
+  { icao: "WBSB", name: "Brunei Intl", city: "Bandar Seri Begawan", country: "BN", lat: 4.9442, lon: 114.9282, rwy: 12009 },
+  { icao: "VVNB", name: "Noi Bai Intl", city: "Hanoi", country: "VN", lat: 21.2212, lon: 105.8074, rwy: 12466 },
+  { icao: "VVTS", name: "Tan Son Nhat", city: "Ho Chi Minh City", country: "VN", lat: 10.8188, lon: 106.6519, rwy: 12468 },
+  { icao: "ZBAA", name: "Beijing Capital", city: "Beijing", country: "CN", lat: 40.0801, lon: 116.5846, rwy: 12468 },
+  { icao: "ZSPD", name: "Shanghai Pudong", city: "Shanghai", country: "CN", lat: 31.1434, lon: 121.8052, rwy: 13123 },
+  { icao: "ZGGG", name: "Baiyun", city: "Guangzhou", country: "CN", lat: 23.3924, lon: 113.2988, rwy: 12468 },
+  { icao: "RJTT", name: "Haneda", city: "Tokyo", country: "JP", lat: 35.5494, lon: 139.7798, rwy: 11024 },
+  { icao: "RJAA", name: "Narita", city: "Tokyo", country: "JP", lat: 35.7647, lon: 140.3863, rwy: 13123 },
+  { icao: "RJBB", name: "Kansai Intl", city: "Osaka", country: "JP", lat: 34.4347, lon: 135.2441, rwy: 13123 },
+  { icao: "RKSI", name: "Incheon Intl", city: "Seoul", country: "KR", lat: 37.4691, lon: 126.4505, rwy: 12303 },
+  { icao: "RKSS", name: "Gimpo Intl", city: "Seoul", country: "KR", lat: 37.5587, lon: 126.7906, rwy: 11811 },
+  { icao: "RCTP", name: "Taoyuan Intl", city: "Taipei", country: "TW", lat: 25.0777, lon: 121.2328, rwy: 12008 },
+
+  // --- Australasia ---
+  { icao: "YSSY", name: "Kingsford Smith", city: "Sydney", country: "AU", lat: -33.9461, lon: 151.1772, rwy: 13000 },
+  { icao: "YMML", name: "Melbourne Tullamarine", city: "Melbourne", country: "AU", lat: -37.6733, lon: 144.8431, rwy: 11998 },
+  { icao: "YBBN", name: "Brisbane", city: "Brisbane", country: "AU", lat: -27.3842, lon: 153.1175, rwy: 11713 },
+  { icao: "YPPH", name: "Perth", city: "Perth", country: "AU", lat: -31.9405, lon: 115.9670, rwy: 11286 },
+  { icao: "NZAA", name: "Auckland", city: "Auckland", country: "NZ", lat: -37.0080, lon: 174.7917, rwy: 11926 },
+  { icao: "NZCH", name: "Christchurch", city: "Christchurch", country: "NZ", lat: -43.4894, lon: 172.5320, rwy: 10788 },
+  { icao: "NZQN", name: "Queenstown", city: "Queenstown", country: "NZ", lat: -45.0211, lon: 168.7392, rwy: 7497 }
+];
+
+/* ============================================================
+   STATE & HELPERS
+============================================================ */
+
+const WIND_LEVELS = [180, 240, 300, 340, 370, 410, 450, 510];
+const TAXI_OVERHEAD_HR = 0.3;
+const winds = {}; // { 180: {dir, spd}, ... }
+WIND_LEVELS.forEach(fl => winds[fl] = { dir: 0, spd: 0 });
+
+const FUEL_DENSITY = 6.7; // lbs/gal for Jet A — informational only
+let sortState = { col: "range", asc: false };
+let lastResults = null;
+
+// Aircraft selection state — default all selected
+const selectedAircraft = new Set(AIRCRAFT.map(a => a.id));
+
+// Compare-tab aircraft selection — separate state, defaults to 4 typical aircraft
+// covering categories. Filters the Compare-tab side-by-side, table, cost chart,
+// and custom altitude views.
+const TYPICAL_COMPARE = ["citation-latitude", "challenger-350", "falcon-2000lxs", "gulfstream-g550"];
+const compareSelectedAircraft = new Set(TYPICAL_COMPARE);
+
+// Half-MX program: aircraft eligible for a specialized maintenance program that
+// reduces airframe MX reserves by 50%. When toggled on, the discount propagates
+// through every $/hr, $/trip, and chart calculation. Engine reserves are NOT
+// affected (those are OEM programs like MSP/ESP/Corporate Care).
+const HALF_MX_ELIGIBLE = ["citation-x", "citation-x-plus"];
+const halfMXAircraft = new Set();
+function mxFor(aircraft) {
+  return halfMXAircraft.has(aircraft.id) ? aircraft.mx_per_hour * 0.5 : aircraft.mx_per_hour;
+}
+
+// Per-aircraft altitude selection in TRIP CALCULATOR results.
+// id → Set of FLs eligible for "best" calculation. Lazy init; default = all
+// bands except ceiling (matches ceiling-exclusion rule).
+const tripAltSelection = {};
+function ensureTripAltSelection(aircraft) {
+  if (!tripAltSelection[aircraft.id]) {
+    const maxFl = Math.max(...aircraft.altitude_bands.map(b => b.fl));
+    tripAltSelection[aircraft.id] = new Set(
+      aircraft.altitude_bands.filter(b => b.fl !== maxFl).map(b => b.fl)
+    );
+  }
+  return tripAltSelection[aircraft.id];
+}
+
+// Approximate when-new MSRP and production years for each model.
+// Used by the Value Estimator. Figures are rounded ballpark — real
+// values varied year-to-year within each production run.
+const AIRCRAFT_VALUATION = {
+  "falcon-50":           { new_price: 12500000, prod_start: 1979, prod_end: 1994 },
+  "citation-560":        { new_price:  7200000, prod_start: 1989, prod_end: 2001 },
+  "citation-xls":        { new_price: 13500000, prod_start: 2008, prod_end: 2022 },
+  "citation-latitude":   { new_price: 18500000, prod_start: 2015, prod_end: null },
+  "citation-x":          { new_price: 20500000, prod_start: 1996, prod_end: 2014 },
+  "citation-x-plus":     { new_price: 23500000, prod_start: 2014, prod_end: 2018 },
+  "gulfstream-g280":     { new_price: 25000000, prod_start: 2012, prod_end: null },
+  "challenger-600":      { new_price:  7000000, prod_start: 1980, prod_end: 1983 },
+  "challenger-601":      { new_price: 11000000, prod_start: 1983, prod_end: 1996 },
+  "challenger-350":      { new_price: 27000000, prod_start: 2014, prod_end: null },
+  "falcon-2000dx":       { new_price: 32000000, prod_start: 2007, prod_end: 2009 },
+  "falcon-2000ex":       { new_price: 28000000, prod_start: 2003, prod_end: 2007 },
+  "falcon-2000lxs":      { new_price: 35500000, prod_start: 2014, prod_end: null },
+  "falcon-900dx":        { new_price: 38000000, prod_start: 2005, prod_end: 2010 },
+  "falcon-900ex":        { new_price: 36000000, prod_start: 1995, prod_end: 2010 },
+  "falcon-900lx":        { new_price: 44500000, prod_start: 2010, prod_end: null },
+  "gulfstream-giv":      { new_price: 26000000, prod_start: 1987, prod_end: 2002 },
+  "gulfstream-g450":     { new_price: 40000000, prod_start: 2005, prod_end: 2017 },
+  "gulfstream-gv":       { new_price: 40000000, prod_start: 1997, prod_end: 2002 },
+  "gulfstream-g500-old": { new_price: 45000000, prod_start: 2003, prod_end: 2008 },
+  "gulfstream-g500-new": { new_price: 48000000, prod_start: 2018, prod_end: null },
+  "gulfstream-g550":         { new_price: 60000000, prod_start: 2003, prod_end: 2021 },
+  "citation-sovereign":      { new_price: 16500000, prod_start: 2004, prod_end: 2013 },
+  "citation-sovereign-plus": { new_price: 18500000, prod_start: 2014, prod_end: 2021 },
+  "embraer-praetor-500":     { new_price: 17000000, prod_start: 2019, prod_end: null },
+  "embraer-praetor-600":     { new_price: 21000000, prod_start: 2019, prod_end: null },
+  "embraer-legacy-600":      { new_price: 23500000, prod_start: 2002, prod_end: 2009 },
+  "embraer-legacy-650":      { new_price: 26500000, prod_start: 2010, prod_end: 2020 },
+  "hawker-900xp":            { new_price: 15000000, prod_start: 2008, prod_end: 2013 }
+};
+
+// Maps each flight level to the two nearest Open-Meteo pressure levels
+// and the interpolation weight toward the higher-altitude (lower-pressure) one.
+// Approximations from ICAO standard atmosphere:
+//   500 hPa ≈ FL183, 400 ≈ FL236, 300 ≈ FL301, 250 ≈ FL340,
+//   200 ≈ FL387, 150 ≈ FL446, 100 ≈ FL531.
+const FL_INTERP = {
+  180: { lo: 500, hi: 500, w: 0 },
+  240: { lo: 400, hi: 400, w: 0 },
+  300: { lo: 300, hi: 300, w: 0 },
+  340: { lo: 250, hi: 250, w: 0 },
+  370: { lo: 250, hi: 200, w: 0.638 },
+  410: { lo: 200, hi: 150, w: 0.390 },
+  450: { lo: 150, hi: 150, w: 0 },
+  510: { lo: 150, hi: 100, w: 0.753 }
+};
+
+// Haversine great-circle distance in nautical miles
+function gcDistance(lat1, lon1, lat2, lon2) {
+  const R = 3440.065; // earth radius in nm
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+// Initial bearing from origin to destination (degrees true)
+function gcBearing(lat1, lon1, lat2, lon2) {
+  const toRad = d => d * Math.PI / 180;
+  const φ1 = toRad(lat1), φ2 = toRad(lat2);
+  const Δλ = toRad(lon2 - lon1);
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) -
+            Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  const θ = Math.atan2(y, x) * 180 / Math.PI;
+  return (θ + 360) % 360;
+}
+
+// Resolve wind into headwind component along route bearing.
+// wind_from_dir = direction wind is FROM, both in degrees.
+function headwindComponent(windFromDir, windSpd, bearing) {
+  const angle = (windFromDir - bearing) * Math.PI / 180;
+  return windSpd * Math.cos(angle);
+}
+
+// Nearest wind level for a given flight level
+function windForAltitude(fl) {
+  let closest = WIND_LEVELS[0];
+  let best = Math.abs(fl - WIND_LEVELS[0]);
+  for (const w of WIND_LEVELS) {
+    const d = Math.abs(fl - w);
+    if (d < best) { best = d; closest = w; }
+  }
+  return winds[closest];
+}
+
+function fmtMoney(n) {
+  if (!isFinite(n)) return "—";
+  return "$" + Math.round(n).toLocaleString("en-US");
+}
+function fmtMoneyShort(n) {
+  if (!isFinite(n)) return "—";
+  if (n >= 1e6) return "$" + (n/1e6).toFixed(1) + "M";
+  if (n >= 1e3) return "$" + (n/1e3).toFixed(1) + "K";
+  return "$" + Math.round(n);
+}
+function fmtTime(hrs) {
+  if (!isFinite(hrs) || hrs <= 0) return "—";
+  const h = Math.floor(hrs);
+  const m = Math.round((hrs - h) * 60);
+  return h + ":" + String(m).padStart(2, "0");
+}
+function fmtNum(n, digits = 0) {
+  if (!isFinite(n)) return "—";
+  return n.toLocaleString("en-US", { maximumFractionDigits: digits, minimumFractionDigits: digits });
+}
+
+function findAirport(icao) {
+  if (!icao) return null;
+  const code = icao.trim().toUpperCase();
+  return AIRPORTS.find(a => a.icao === code) || null;
+}
+
+/* ============================================================
+   COMPARE TAB — aircraft selector, side-by-side specs, refresh
+============================================================ */
+
+function renderCompareSelector() {
+  const container = document.getElementById("compare-aircraft-selector");
+  const byMfr = {};
+  for (const a of AIRCRAFT) {
+    (byMfr[a.manufacturer] = byMfr[a.manufacturer] || []).push(a);
+  }
+  const order = ["Dassault", "Cessna", "Gulfstream", "Bombardier", "Embraer", "Hawker"];
+
+  container.innerHTML = order.filter(m => byMfr[m]).map(mfr => `
+    <div class="selector-group">
+      <div class="selector-group-label">
+        ${mfr}
+        <button class="selector-group-toggle" data-compare-mfr="${mfr}">toggle all</button>
+      </div>
+      <div class="selector-chips">
+        ${byMfr[mfr].map(a => `
+          <label class="chip ${compareSelectedAircraft.has(a.id) ? 'on' : ''}" data-compare-id="${a.id}">
+            <input type="checkbox" data-compare-id="${a.id}" ${compareSelectedAircraft.has(a.id) ? 'checked' : ''} />
+            ${a.name}
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+
+  container.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = chip.dataset.compareId;
+      if (compareSelectedAircraft.has(id)) compareSelectedAircraft.delete(id);
+      else compareSelectedAircraft.add(id);
+      refreshCompareViews();
+    });
+  });
+
+  container.querySelectorAll(".selector-group-toggle").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const mfr = btn.dataset.compareMfr;
+      const list = byMfr[mfr];
+      const allOn = list.every(a => compareSelectedAircraft.has(a.id));
+      list.forEach(a => {
+        if (allOn) compareSelectedAircraft.delete(a.id);
+        else compareSelectedAircraft.add(a.id);
+      });
+      refreshCompareViews();
+    });
+  });
+
+  document.getElementById("compare-selector-count").textContent =
+    `${compareSelectedAircraft.size} of ${AIRCRAFT.length} selected`;
+}
+
+function renderSideBySideSpecs() {
+  const container = document.getElementById("side-by-side-container");
+  const aircraft = AIRCRAFT.filter(a => compareSelectedAircraft.has(a.id));
+
+  if (aircraft.length === 0) {
+    container.innerHTML = `<div class="placeholder">Select aircraft above to compare specs side-by-side.</div>`;
+    return;
+  }
+  if (aircraft.length === 1) {
+    container.innerHTML = `<div class="placeholder">Select at least 2 aircraft to compare side-by-side.</div>`;
+    return;
+  }
+
+  const typicalBand = a => a.altitude_bands.find(b => b.fl === a.typical_fl)
+    || a.altitude_bands[Math.floor(a.altitude_bands.length / 2)];
+
+  const sections = [
+    {
+      title: "General",
+      rows: [
+        ["Manufacturer", a => a.manufacturer],
+        ["Year introduced", a => a.year_intro],
+        ["Category", a => `<span class="cat-pill ${a.category}">${a.category}</span>`],
+        ["Crew required", a => a.crew]
+      ]
+    },
+    {
+      title: "Cabin",
+      rows: [
+        ["Seats (typical / max)", a => `${a.seats} / ${a.max_seats}`],
+        ["Cabin L × W × H (ft)", a => `${a.cabin.length_ft} × ${a.cabin.width_ft} × ${a.cabin.height_ft}`],
+        ["Baggage (cu ft)", a => a.baggage_cuft],
+        ["Lavatory", a => a.lavatory]
+      ]
+    },
+    {
+      title: "Performance",
+      rows: [
+        ["Range (NBAA IFR, nm)", a => fmtNum(a.range_nm)],
+        ["Cruise @ typical FL (kt)", a => `${typicalBand(a).tas} (M${(typicalBand(a).tas / 573).toFixed(2)})`],
+        ["Typical cruise altitude", a => `FL${a.typical_fl}`],
+        ["Service ceiling", a => `FL${a.ceiling_fl}`],
+        ["Balanced field length (ft)", a => fmtNum(a.bfl_ft)],
+        ["MTOW (lbs)", a => fmtNum(a.mtow_lbs)]
+      ]
+    },
+    {
+      title: "Powerplant & Fuel",
+      rows: [
+        ["Engines", a => a.engines],
+        ["Burn @ typical FL (gph)", a => typicalBand(a).burn]
+      ]
+    },
+    {
+      title: "Cost (per flight hour, $6.50/gal)",
+      rows: [
+        ["Fuel $/hr", a => fmtMoney(typicalBand(a).burn * 6.50)],
+        ["MX reserves $/hr", a => {
+          const full = a.mx_per_hour;
+          if (!halfMXAircraft.has(a.id)) return fmtMoney(full);
+          return `<span class="mx-strike">${fmtMoney(full)}</span><span class="mx-disc">${fmtMoney(full * 0.5)}</span>`;
+        }],
+        ["Engine reserves $/hr", a => fmtMoney(a.engine_per_hour)],
+        ["Variable $/hr (total)", a => {
+          const total = typicalBand(a).burn * 6.50 + mxFor(a) + a.engine_per_hour;
+          if (!halfMXAircraft.has(a.id)) return fmtMoney(total);
+          const fullTotal = typicalBand(a).burn * 6.50 + a.mx_per_hour + a.engine_per_hour;
+          return `<span class="mx-strike">${fmtMoney(fullTotal)}</span><span class="mx-disc">${fmtMoney(total)}</span>`;
+        }],
+        ["Used market range", a => `${fmtMoneyShort(a.acquisition.low)} – ${fmtMoneyShort(a.acquisition.high)}`]
+      ]
+    }
+  ];
+
+  let html = `<table class="side-by-side"><thead><tr><th>Spec</th>${aircraft.map(a => {
+    const badge = halfMXAircraft.has(a.id) ? `<span class="mx-program-badge">50% MX PROGRAM</span>` : "";
+    return `<th>${a.name}${badge}</th>`;
+  }).join("")}</tr></thead><tbody>`;
+  for (const section of sections) {
+    html += `<tr class="section-header"><td colspan="${aircraft.length + 1}">${section.title}</td></tr>`;
+    for (const [label, getter] of section.rows) {
+      html += `<tr><td>${label}</td>${aircraft.map(a => `<td>${getter(a)}</td>`).join("")}</tr>`;
+    }
+  }
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+function renderMXToggles() {
+  const container = document.getElementById("mx-toggles");
+  const eligibleAircraft = HALF_MX_ELIGIBLE
+    .map(id => AIRCRAFT.find(a => a.id === id))
+    .filter(Boolean);
+  container.innerHTML = eligibleAircraft.map(a => {
+    const isOn = halfMXAircraft.has(a.id);
+    const full = a.mx_per_hour;
+    const disc = full * 0.5;
+    return `
+      <label class="mx-toggle ${isOn ? 'on' : ''}" data-id="${a.id}">
+        <input type="checkbox" ${isOn ? 'checked' : ''} />
+        <div class="mx-toggle-content">
+          <div class="mx-toggle-name">${a.name}</div>
+          <div class="mx-toggle-info">
+            <span class="${isOn ? 'strike' : ''}">${fmtMoney(full)}/hr</span>
+            ${isOn ? `<span class="new"> → ${fmtMoney(disc)}/hr</span>` : ` (full reserves)`}
+          </div>
+        </div>
+      </label>
+    `;
+  }).join("");
+  container.querySelectorAll(".mx-toggle").forEach(toggle => {
+    toggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = toggle.dataset.id;
+      if (halfMXAircraft.has(id)) halfMXAircraft.delete(id);
+      else halfMXAircraft.add(id);
+      renderMXToggles();
+      refreshCompareViews();
+      // If trip results are showing, re-run trip calc so its numbers update too
+      if (lastResults) calcTrip();
+    });
+  });
+}
+
+function refreshCompareViews() {
+  document.getElementById("compare-selector-count").textContent =
+    `${compareSelectedAircraft.size} of ${AIRCRAFT.length} selected`;
+  // Update chip visual states without full re-render of selector
+  document.querySelectorAll("#compare-aircraft-selector .chip").forEach(chip => {
+    const id = chip.dataset.compareId;
+    chip.classList.toggle("on", compareSelectedAircraft.has(id));
+    const cb = chip.querySelector("input");
+    if (cb) cb.checked = compareSelectedAircraft.has(id);
+  });
+  renderSideBySideSpecs();
+  renderCompareTable();
+  renderCostChart();
+  renderCustomPicker();
+  renderCustomChart();
+}
+
+/* ============================================================
+   COMPARE TABLE
+============================================================ */
+
+function renderCompareTable() {
+  const tbody = document.querySelector("#compare-table tbody");
+  const fuelDefault = 6.50;
+  const fCat = document.getElementById("filter-category").value;
+  const fMfr = document.getElementById("filter-mfr").value;
+  const fRange = parseFloat(document.getElementById("filter-range").value) || 0;
+  const fSeats = parseFloat(document.getElementById("filter-seats").value) || 0;
+
+  // For sorting / display, derive cruise band = typical_fl. Filter to Compare-tab selection.
+  let rows = AIRCRAFT.filter(a => compareSelectedAircraft.has(a.id)).map(a => {
+    const cb = a.altitude_bands.find(b => b.fl === a.typical_fl) || a.altitude_bands[Math.floor(a.altitude_bands.length/2)];
+    const burn = cb.burn;
+    const speed = cb.tas;
+    const fuelhr = burn * fuelDefault;
+    const varhr = fuelhr + mxFor(a) + a.engine_per_hour;
+    const cabin = `${a.cabin.length_ft}′ × ${a.cabin.height_ft}′`;
+    const prod = a.seats * speed;
+    return { a, burn, speed, fuelhr, varhr, cabin, prod };
+  });
+
+  rows = rows.filter(r => {
+    if (fCat && r.a.category !== fCat) return false;
+    if (fMfr && r.a.manufacturer !== fMfr) return false;
+    if (r.a.range_nm < fRange) return false;
+    if (r.a.seats < fSeats) return false;
+    return true;
+  });
+
+  rows.sort((x, y) => {
+    let av, bv;
+    switch (sortState.col) {
+      case "name": av = x.a.name; bv = y.a.name; break;
+      case "seats": av = x.a.seats; bv = y.a.seats; break;
+      case "range": av = x.a.range_nm; bv = y.a.range_nm; break;
+      case "speed": av = x.speed; bv = y.speed; break;
+      case "ceiling": av = x.a.ceiling_fl; bv = y.a.ceiling_fl; break;
+      case "bfl": av = x.a.bfl_ft; bv = y.a.bfl_ft; break;
+      case "cabin": av = x.a.cabin.length_ft; bv = y.a.cabin.length_ft; break;
+      case "burn": av = x.burn; bv = y.burn; break;
+      case "fuelhr": av = x.fuelhr; bv = y.fuelhr; break;
+      case "varhr": av = x.varhr; bv = y.varhr; break;
+      case "prod": av = x.prod; bv = y.prod; break;
+      default: av = x.a.range_nm; bv = y.a.range_nm;
+    }
+    if (typeof av === "string") return sortState.asc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortState.asc ? av - bv : bv - av;
+  });
+
+  // header sort indicators
+  document.querySelectorAll("#compare-table thead th").forEach(th => {
+    th.classList.remove("sorted", "asc");
+    if (th.dataset.sort === sortState.col) {
+      th.classList.add("sorted");
+      if (sortState.asc) th.classList.add("asc");
+    }
+  });
+
+  tbody.innerHTML = rows.map(r => {
+    const a = r.a;
+    const mach = (r.speed / 573.0).toFixed(2);
+    return `
+      <tr>
+        <td>
+          ${a.name}
+          <span class="cat-pill ${a.category}">${a.category}</span>
+        </td>
+        <td class="num">${a.seats}<span class="sub-num"> / ${a.max_seats}</span></td>
+        <td class="num">${fmtNum(a.range_nm)}</td>
+        <td class="num">${r.speed} <span class="sub-num">M${mach}</span></td>
+        <td class="num">FL${a.ceiling_fl}</td>
+        <td class="num">${fmtNum(a.bfl_ft)}</td>
+        <td class="num">${r.cabin}</td>
+        <td class="num">${r.burn} <span class="sub-num">@FL${a.typical_fl}</span></td>
+        <td class="num">${fmtMoney(r.fuelhr)}</td>
+        <td class="num"><strong>${fmtMoney(r.varhr)}</strong></td>
+        <td class="num">${fmtNum(r.prod)}</td>
+      </tr>
+    `;
+  }).join("");
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 30px; color: var(--muted);">No aircraft match these filters.</td></tr>`;
+  }
+}
+
+/* ============================================================
+   COST CHART (by altitude)
+============================================================ */
+
+// Linearly interpolate burn + TAS for an aircraft at a target FL.
+// Returns null if the target FL is above the aircraft's service ceiling.
+// Also returns at_ceiling flag if the target FL is at the aircraft's ceiling.
+function getPerformanceAt(aircraft, fl) {
+  if (fl > aircraft.ceiling_fl) return null;
+  const bands = aircraft.altitude_bands.slice().sort((a, b) => a.fl - b.fl);
+  const atCeiling = fl >= aircraft.ceiling_fl - 5; // within 5 FL of ceiling
+  // Below lowest band: clamp to lowest
+  if (fl <= bands[0].fl) {
+    return { tas: bands[0].tas, burn: bands[0].burn, at_ceiling: atCeiling };
+  }
+  // Above highest band but at/below ceiling: clamp to highest band
+  if (fl >= bands[bands.length - 1].fl) {
+    const b = bands[bands.length - 1];
+    return { tas: b.tas, burn: b.burn, at_ceiling: atCeiling };
+  }
+  // Interpolate between two bracketing bands
+  for (let i = 0; i < bands.length - 1; i++) {
+    if (fl >= bands[i].fl && fl <= bands[i + 1].fl) {
+      const w = (fl - bands[i].fl) / (bands[i + 1].fl - bands[i].fl);
+      return {
+        tas: bands[i].tas * (1 - w) + bands[i + 1].tas * w,
+        burn: bands[i].burn * (1 - w) + bands[i + 1].burn * w,
+        at_ceiling: atCeiling
+      };
+    }
+  }
+  return null;
+}
+
+function renderCostChart() {
+  const fl = parseInt(document.getElementById("chart-altitude").value, 10);
+  const fuelPrice = parseFloat(document.getElementById("chart-fuel").value) || 6.50;
+  const mode = document.getElementById("chart-mode").value;
+
+  const data = AIRCRAFT.filter(a => compareSelectedAircraft.has(a.id)).map(a => {
+    const perf = getPerformanceAt(a, fl);
+    if (!perf) {
+      return { a, aboveCeiling: true };
+    }
+    const fuelCost = perf.burn * fuelPrice;
+    const mxCost = mxFor(a);
+    const engCost = a.engine_per_hour;
+    const total = fuelCost + mxCost + engCost;
+    const perNm = perf.tas > 0 ? total / perf.tas : Infinity;
+    return {
+      a, perf, aboveCeiling: false,
+      fuelCost, mxCost, engCost, total, perNm,
+      atCeiling: perf.at_ceiling
+    };
+  });
+
+  // Pick the metric to sort/scale by
+  const valueOf = d => (mode === "pernm" ? d.perNm : d.total);
+
+  data.sort((x, y) => {
+    if (x.aboveCeiling !== y.aboveCeiling) return x.aboveCeiling ? 1 : -1;
+    return valueOf(x) - valueOf(y);
+  });
+
+  const visible = data.filter(d => !d.aboveCeiling);
+  const maxValue = visible.length ? Math.max(...visible.map(valueOf)) : 1;
+
+  const container = document.getElementById("cost-chart");
+  container.innerHTML = data.map(d => {
+    if (d.aboveCeiling) {
+      return `
+        <div class="cost-row above-ceiling">
+          <div class="label">${d.a.name}</div>
+          <div class="bar-container">above ceiling (FL${d.a.ceiling_fl})</div>
+          <div class="cost-value">—</div>
+        </div>
+      `;
+    }
+
+    const ceilingWarn = d.atCeiling ? `<span class="ceiling-warn">at ceiling</span>` : "";
+
+    let barHTML, valueHTML;
+    if (mode === "pernm") {
+      const pct = (d.perNm / maxValue) * 100;
+      barHTML = `<div class="bar-stack"><div class="bar-segment bar-fuel" style="width: ${pct}%"></div></div>`;
+      valueHTML = `$${d.perNm.toFixed(2)}<span class="unit">/nm</span>`;
+    } else if (mode === "total") {
+      const pct = (d.total / maxValue) * 100;
+      barHTML = `<div class="bar-stack"><div class="bar-segment bar-fuel" style="width: ${pct}%"></div></div>`;
+      valueHTML = `${fmtMoney(d.total)}<span class="unit">/hr</span>`;
+    } else {
+      // stacked
+      const fuelPct = (d.fuelCost / maxValue) * 100;
+      const mxPct = (d.mxCost / maxValue) * 100;
+      const engPct = (d.engCost / maxValue) * 100;
+      barHTML = `
+        <div class="bar-stack">
+          <div class="bar-segment bar-fuel" style="width: ${fuelPct}%" title="Fuel: ${fmtMoney(d.fuelCost)}/hr (${perf_burn_label(d)})"></div>
+          <div class="bar-segment bar-mx" style="width: ${mxPct}%" title="MX reserves: ${fmtMoney(d.mxCost)}/hr"></div>
+          <div class="bar-segment bar-engine" style="width: ${engPct}%" title="Engine reserves: ${fmtMoney(d.engCost)}/hr"></div>
+        </div>
+      `;
+      valueHTML = `${fmtMoney(d.total)}<span class="unit">/hr</span>`;
+    }
+
+    return `
+      <div class="cost-row">
+        <div class="label">${d.a.name}${ceilingWarn}</div>
+        <div class="bar-container">${barHTML}</div>
+        <div class="cost-value">${valueHTML}</div>
+      </div>
+    `;
+  }).join("") + `
+    <div class="chart-legend">
+      <span><span class="swatch" style="background: var(--gold);"></span>Fuel (${Math.round(visible[0]?.perf?.burn || 0)} gph @ $${fuelPrice.toFixed(2)})</span>
+      <span><span class="swatch" style="background: var(--blue);"></span>MX Reserves</span>
+      <span><span class="swatch" style="background: var(--orange);"></span>Engine Reserves</span>
+      <span style="margin-left: auto; color: var(--muted);">Sorted ${mode === "pernm" ? "by $/nm ascending" : "by $/hr ascending"} · ${visible.length} of ${AIRCRAFT.length} reach FL${fl}</span>
+    </div>
+  `;
+}
+
+function perf_burn_label(d) {
+  return `${Math.round(d.perf.burn)} gph @ TAS ${Math.round(d.perf.tas)}kt`;
+}
+
+/* ============================================================
+   CUSTOM ALTITUDE COMPARISON
+   Per-aircraft altitude picker. Each (aircraft, altitude) pair
+   the user selects becomes a bar in the chart.
+============================================================ */
+
+// State: id → Set of selected FL values. Default: each aircraft's typical_fl.
+const customAltitudes = {};
+AIRCRAFT.forEach(a => { customAltitudes[a.id] = new Set([a.typical_fl]); });
+
+function renderCustomPicker() {
+  const container = document.getElementById("custom-picker");
+  const byMfr = {};
+  for (const a of AIRCRAFT) {
+    if (!compareSelectedAircraft.has(a.id)) continue;
+    (byMfr[a.manufacturer] = byMfr[a.manufacturer] || []).push(a);
+  }
+  const order = ["Dassault", "Cessna", "Gulfstream", "Bombardier", "Embraer", "Hawker"];
+
+  container.innerHTML = order.filter(m => byMfr[m]).map(mfr => `
+    <div class="alt-picker-group">
+      <div class="alt-picker-group-label">${mfr}</div>
+      ${byMfr[mfr].map(a => {
+        const maxFl = Math.max(...a.altitude_bands.map(b => b.fl));
+        const sorted = a.altitude_bands.slice().sort((x, y) => x.fl - y.fl);
+        return `
+          <div class="alt-picker-row">
+            <div class="name">${a.name}</div>
+            <div class="alt-picker-chips">
+              ${sorted.map(b => {
+                const isCeiling = b.fl === maxFl;
+                const isOn = customAltitudes[a.id].has(b.fl);
+                return `<span class="alt-chip${isOn ? ' on' : ''}${isCeiling ? ' ceiling' : ''}" data-id="${a.id}" data-fl="${b.fl}">
+                  FL${b.fl}${isCeiling ? '<span class="ceiling-mark">CEIL</span>' : ''}
+                </span>`;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `).join("");
+
+  container.querySelectorAll(".alt-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const id = chip.dataset.id;
+      const fl = parseInt(chip.dataset.fl, 10);
+      if (customAltitudes[id].has(fl)) customAltitudes[id].delete(fl);
+      else customAltitudes[id].add(fl);
+      chip.classList.toggle("on");
+      renderCustomChart();
+    });
+  });
+}
+
+function setCustomAltitudes(mode) {
+  // mode: 'typical' | 'all' | 'clear'
+  for (const a of AIRCRAFT) {
+    customAltitudes[a.id].clear();
+    if (mode === "typical") {
+      customAltitudes[a.id].add(a.typical_fl);
+    } else if (mode === "all") {
+      a.altitude_bands.forEach(b => customAltitudes[a.id].add(b.fl));
+    }
+  }
+  renderCustomPicker();
+  renderCustomChart();
+}
+
+function renderCustomChart() {
+  const container = document.getElementById("custom-chart");
+  const fuelPrice = parseFloat(document.getElementById("custom-fuel").value) || 6.50;
+  const mode = document.getElementById("custom-mode").value;
+
+  // Build list of (aircraft, altitude) bars — only for selected aircraft
+  const data = [];
+  for (const a of AIRCRAFT) {
+    if (!compareSelectedAircraft.has(a.id)) continue;
+    for (const fl of customAltitudes[a.id]) {
+      const perf = getPerformanceAt(a, fl);
+      if (!perf) continue;
+      const fuelCost = perf.burn * fuelPrice;
+      const mxCost = mxFor(a);
+      const engCost = a.engine_per_hour;
+      const total = fuelCost + mxCost + engCost;
+      const perNm = perf.tas > 0 ? total / perf.tas : Infinity;
+      const maxFl = Math.max(...a.altitude_bands.map(b => b.fl));
+      data.push({
+        a, fl, perf, fuelCost, mxCost, engCost, total, perNm,
+        isCeiling: fl === maxFl
+      });
+    }
+  }
+
+  if (data.length === 0) {
+    container.innerHTML = `<div class="placeholder">No altitudes selected. Pick at least one band per aircraft above (or add aircraft via the selector at the top).</div>`;
+    return;
+  }
+
+  const valueOf = d => (mode === "pernm" ? d.perNm : d.total);
+  data.sort((x, y) => valueOf(x) - valueOf(y));
+
+  // Cheapest = baseline (0%). Others show "+X%" relative to baseline.
+  const baseValue = valueOf(data[0]);
+  const maxValue = valueOf(data[data.length - 1]);
+  const maxDelta = maxValue - baseValue;
+  const safeMaxDelta = maxDelta > 0 ? maxDelta : 1;
+
+  container.innerHTML = data.map((d, idx) => {
+    const ceilingWarn = d.isCeiling ? ` <span class="ceiling-warn">ceiling</span>` : "";
+    const value = valueOf(d);
+    const delta = value - baseValue;
+    const pctIncrease = baseValue > 0 ? (delta / baseValue) * 100 : 0;
+    const isCheapest = idx === 0;
+
+    // Bar width: delta-based for total/pernm (cheapest = empty), absolute for stacked (preserves composition)
+    let barHTML;
+    if (mode === "stacked") {
+      const fuelPct = (d.fuelCost / maxValue) * 100;
+      const mxPct = (d.mxCost / maxValue) * 100;
+      const engPct = (d.engCost / maxValue) * 100;
+      barHTML = `
+        <div class="bar-stack">
+          <div class="bar-segment bar-fuel" style="width: ${fuelPct}%" title="Fuel: ${fmtMoney(d.fuelCost)}/hr (${Math.round(d.perf.burn)} gph @ TAS ${Math.round(d.perf.tas)}kt)"></div>
+          <div class="bar-segment bar-mx" style="width: ${mxPct}%" title="MX reserves: ${fmtMoney(d.mxCost)}/hr"></div>
+          <div class="bar-segment bar-engine" style="width: ${engPct}%" title="Engine reserves: ${fmtMoney(d.engCost)}/hr"></div>
+        </div>
+      `;
+    } else {
+      const pct = (delta / safeMaxDelta) * 100;
+      barHTML = `<div class="bar-stack"><div class="bar-segment bar-fuel" style="width: ${pct}%"></div></div>`;
+    }
+
+    // Label: "baseline" for cheapest, "+X%" for others. Absolute value as sub-text.
+    const absLabel = mode === "pernm"
+      ? `$${d.perNm.toFixed(2)}/nm`
+      : `${fmtMoney(d.total)}/hr`;
+    const headlineLabel = isCheapest
+      ? `<span style="color: var(--gold);">baseline</span>`
+      : `<span style="color: var(--gold);">+${pctIncrease.toFixed(1)}%</span>`;
+    const valueHTML = `${headlineLabel}<span class="unit">${absLabel}</span>`;
+
+    return `
+      <div class="cost-row">
+        <div class="label">${d.a.name} <span style="color: var(--muted); font-weight: 400;">@ FL${d.fl}</span>${ceilingWarn}</div>
+        <div class="bar-container">${barHTML}</div>
+        <div class="cost-value">${valueHTML}</div>
+      </div>
+    `;
+  }).join("") + `
+    <div class="chart-legend">
+      <span><span class="swatch" style="background: var(--gold);"></span>Fuel @ $${fuelPrice.toFixed(2)}/gal</span>
+      <span><span class="swatch" style="background: var(--blue);"></span>MX Reserves</span>
+      <span><span class="swatch" style="background: var(--orange);"></span>Engine Reserves</span>
+      <span style="margin-left: auto; color: var(--muted);">${data.length} aircraft-altitude combinations · cheapest = baseline (0%)</span>
+    </div>
+  `;
+}
+
+/* ============================================================
+   TRIP CALCULATOR
+============================================================ */
+
+function buildWindGrid() {
+  const grid = document.getElementById("wind-grid");
+  grid.innerHTML = WIND_LEVELS.map(fl => `
+    <div class="wind-cell">
+      <div class="wind-cell-header">FL${fl}</div>
+      <div class="wind-row">
+        <div class="field">
+          <label>Dir</label>
+          <input type="number" min="0" max="360" data-fl="${fl}" data-axis="dir" placeholder="0" />
+        </div>
+        <div class="field">
+          <label>Spd</label>
+          <input type="number" min="0" data-fl="${fl}" data-axis="spd" placeholder="0" />
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const fl = parseInt(inp.dataset.fl, 10);
+      const axis = inp.dataset.axis;
+      winds[fl][axis] = parseFloat(inp.value) || 0;
+    });
+  });
+}
+
+function resetWinds() {
+  WIND_LEVELS.forEach(fl => { winds[fl] = { dir: 0, spd: 0 }; });
+  document.querySelectorAll("#wind-grid input").forEach(i => i.value = "");
+}
+
+function setupTypeahead(inputId, listId) {
+  const inp = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+  inp.addEventListener("input", () => {
+    const q = inp.value.trim().toUpperCase();
+    if (q.length < 1) { list.classList.remove("show"); return; }
+    const matches = AIRPORTS.filter(a =>
+      a.icao.startsWith(q) ||
+      a.icao.includes(q) ||
+      a.name.toUpperCase().includes(q) ||
+      a.city.toUpperCase().includes(q)
+    ).slice(0, 12);
+    if (matches.length === 0) { list.classList.remove("show"); return; }
+    list.innerHTML = matches.map(a => `
+      <div class="typeahead-item" data-icao="${a.icao}">
+        <span class="icao">${a.icao}</span>
+        <span class="name"> · ${a.name}</span>
+        <div class="meta">${a.city} · ${a.country} · ${fmtNum(a.rwy)} ft</div>
+      </div>
+    `).join("");
+    list.classList.add("show");
+  });
+  list.addEventListener("click", (e) => {
+    const item = e.target.closest(".typeahead-item");
+    if (!item) return;
+    inp.value = item.dataset.icao;
+    list.classList.remove("show");
+  });
+  inp.addEventListener("blur", () => setTimeout(() => list.classList.remove("show"), 150));
+}
+
+// Linear interpolation between two compass directions, handling wraparound
+function interpDir(d1, d2, w) {
+  let diff = d2 - d1;
+  if (diff > 180) diff -= 360;
+  else if (diff < -180) diff += 360;
+  let r = d1 + diff * w;
+  if (r < 0) r += 360;
+  if (r >= 360) r -= 360;
+  return r;
+}
+
+function showWindStatus(msg, kind = "ok") {
+  const el = document.getElementById("wind-status");
+  el.className = "wind-status show " + kind;
+  el.innerHTML = msg;
+}
+
+async function fetchTodayWinds() {
+  const origin = findAirport(document.getElementById("origin").value);
+  const dest = findAirport(document.getElementById("dest").value);
+  if (!origin || !dest) {
+    showWindStatus("Set origin and destination ICAOs first.", "error");
+    return;
+  }
+  if (origin.icao === dest.icao) {
+    showWindStatus("Origin and destination are the same — can't compute a midpoint.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("fetch-winds-btn");
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Fetching…";
+  showWindStatus('<span class="spinner"></span> Fetching GFS forecast from Open-Meteo…', "loading");
+
+  try {
+    // Midpoint with dateline-safe longitude average
+    const midLat = (origin.lat + dest.lat) / 2;
+    let midLon;
+    const dLon = dest.lon - origin.lon;
+    if (Math.abs(dLon) > 180) {
+      const sum = origin.lon + dest.lon + (origin.lon < 0 ? 360 : -360);
+      midLon = sum / 2;
+      if (midLon > 180) midLon -= 360;
+      if (midLon < -180) midLon += 360;
+    } else {
+      midLon = (origin.lon + dest.lon) / 2;
+    }
+
+    const levels = [500, 400, 300, 250, 200, 150, 100];
+    const params = levels.flatMap(p => [`wind_speed_${p}hPa`, `wind_direction_${p}hPa`]).join(",");
+    const url = `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${midLat.toFixed(3)}&longitude=${midLon.toFixed(3)}` +
+      `&hourly=${params}&wind_speed_unit=kn&forecast_days=2`;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`Open-Meteo returned HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (!data.hourly || !data.hourly.time) throw new Error("Unexpected response shape");
+
+    // Pick the forecast hour closest to "now" (or next future hour)
+    const now = Date.now();
+    const times = data.hourly.time.map(t => new Date(t + "Z").getTime());
+    let idx = times.findIndex(t => t >= now);
+    if (idx === -1) idx = times.length - 1;
+    if (idx > 0 && (times[idx] - now) > (now - times[idx - 1])) idx -= 1;
+
+    // Extract winds at each pressure level
+    const windsAtPL = {};
+    for (const p of levels) {
+      const s = data.hourly[`wind_speed_${p}hPa`]?.[idx];
+      const d = data.hourly[`wind_direction_${p}hPa`]?.[idx];
+      if (s == null || d == null) throw new Error(`Missing ${p} hPa data`);
+      windsAtPL[p] = { spd: s, dir: d };
+    }
+
+    // Map each flight level to interpolated wind from the pressure-level grid
+    for (const fl of WIND_LEVELS) {
+      const cfg = FL_INTERP[fl];
+      const lo = windsAtPL[cfg.lo];
+      const hi = windsAtPL[cfg.hi];
+      const spd = lo.spd * (1 - cfg.w) + hi.spd * cfg.w;
+      const dir = cfg.w === 0 ? lo.dir : interpDir(lo.dir, hi.dir, cfg.w);
+      winds[fl].spd = Math.round(spd);
+      winds[fl].dir = Math.round(dir);
+    }
+
+    // Push values into the input fields
+    document.querySelectorAll("#wind-grid input").forEach(inp => {
+      const fl = parseInt(inp.dataset.fl, 10);
+      const axis = inp.dataset.axis;
+      inp.value = winds[fl][axis];
+    });
+
+    const validTime = new Date(times[idx]).toLocaleString(undefined, {
+      weekday: "short", month: "short", day: "numeric",
+      hour: "numeric", minute: "2-digit", timeZoneName: "short"
+    });
+    showWindStatus(
+      `Loaded GFS forecast valid <code>${validTime}</code> · midpoint ` +
+      `<code>${midLat.toFixed(2)}, ${midLon.toFixed(2)}</code>. ` +
+      `<span style="color: var(--muted);">Source: Open-Meteo · single-point sample · adjust manually if needed.</span>`,
+      "ok"
+    );
+  } catch (e) {
+    showWindStatus(`Couldn't fetch winds: ${e.message}. Enter manually.`, "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+function renderAircraftSelector() {
+  const container = document.getElementById("aircraft-selector");
+  const byMfr = {};
+  for (const a of AIRCRAFT) {
+    (byMfr[a.manufacturer] = byMfr[a.manufacturer] || []).push(a);
+  }
+  const order = ["Dassault", "Cessna", "Gulfstream", "Bombardier", "Embraer", "Hawker"];
+
+  container.innerHTML = order.filter(m => byMfr[m]).map(mfr => `
+    <div class="selector-group">
+      <div class="selector-group-label">
+        ${mfr}
+        <button class="selector-group-toggle" data-mfr="${mfr}">toggle all</button>
+      </div>
+      <div class="selector-chips">
+        ${byMfr[mfr].map(a => `
+          <label class="chip ${selectedAircraft.has(a.id) ? 'on' : ''}" data-id="${a.id}">
+            <input type="checkbox" data-id="${a.id}" ${selectedAircraft.has(a.id) ? 'checked' : ''} />
+            ${a.name}
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+
+  // chip click toggles selection
+  container.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = chip.dataset.id;
+      if (selectedAircraft.has(id)) selectedAircraft.delete(id);
+      else selectedAircraft.add(id);
+      chip.classList.toggle("on");
+      chip.querySelector("input").checked = selectedAircraft.has(id);
+      updateSelectorCount();
+    });
+  });
+
+  // per-manufacturer toggle
+  container.querySelectorAll(".selector-group-toggle").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const mfr = btn.dataset.mfr;
+      const list = byMfr[mfr];
+      const allOn = list.every(a => selectedAircraft.has(a.id));
+      list.forEach(a => {
+        if (allOn) selectedAircraft.delete(a.id);
+        else selectedAircraft.add(a.id);
+      });
+      renderAircraftSelector();
+      updateSelectorCount();
+    });
+  });
+
+  updateSelectorCount();
+}
+
+function updateSelectorCount() {
+  document.getElementById("selector-count").textContent =
+    `${selectedAircraft.size} of ${AIRCRAFT.length} selected`;
+}
+
+function calcTrip() {
+  const container = document.getElementById("results-container");
+  const origin = findAirport(document.getElementById("origin").value);
+  const dest = findAirport(document.getElementById("dest").value);
+  const fuelPrice = parseFloat(document.getElementById("fuel-price").value) || 6.50;
+  const minRwy = parseFloat(document.getElementById("min-rwy").value) || 4500;
+  const pax = parseInt(document.getElementById("pax").value, 10) || null;
+
+  if (!origin || !dest) {
+    container.innerHTML = `<div class="placeholder" style="color: var(--red);">
+      Origin or destination ICAO not recognized. Try the typeahead suggestions.
+    </div>`;
+    return;
+  }
+
+  if (origin.icao === dest.icao) {
+    container.innerHTML = `<div class="placeholder" style="color: var(--red);">
+      Origin and destination are the same airport.
+    </div>`;
+    return;
+  }
+
+  if (selectedAircraft.size === 0) {
+    container.innerHTML = `<div class="placeholder" style="color: var(--red);">
+      No aircraft selected. Pick at least one in the panel above.
+    </div>`;
+    return;
+  }
+
+  const distance = gcDistance(origin.lat, origin.lon, dest.lat, dest.lon);
+  const bearing = gcBearing(origin.lat, origin.lon, dest.lat, dest.lon);
+
+  // Runway check: warn if either airport is below the minimum
+  const rwyWarnings = [];
+  if (origin.rwy < minRwy) rwyWarnings.push(`${origin.icao} runway is ${fmtNum(origin.rwy)} ft (below ${fmtNum(minRwy)} ft minimum)`);
+  if (dest.rwy < minRwy) rwyWarnings.push(`${dest.icao} runway is ${fmtNum(dest.rwy)} ft (below ${fmtNum(minRwy)} ft minimum)`);
+
+  // Per-aircraft computation — only for selected aircraft
+  const results = AIRCRAFT.filter(a => selectedAircraft.has(a.id)).map(a => {
+    const bands = a.altitude_bands.map(band => {
+      const w = windForAltitude(band.fl);
+      const hw = headwindComponent(w.dir, w.spd, bearing);
+      const groundSpeed = band.tas - hw;
+      if (groundSpeed <= 0) {
+        return { ...band, hw, groundSpeed, time: Infinity, fuel: Infinity, cost: Infinity, infeasible: true };
+      }
+      const enroute = distance / groundSpeed;
+      const blockTime = enroute + TAXI_OVERHEAD_HR;
+      const fuelGal = band.burn * blockTime;
+      const fuelCost = fuelGal * fuelPrice;
+      const mxCost = mxFor(a) * blockTime;
+      const engCost = a.engine_per_hour * blockTime;
+      const totalCost = fuelCost + mxCost + engCost;
+      return {
+        ...band, hw, groundSpeed,
+        time: blockTime, fuelGal, fuelCost, mxCost, engCost, cost: totalCost,
+        infeasible: false
+      };
+    });
+
+    const feasibleBands = bands.filter(b => !b.infeasible);
+    // Per-aircraft altitude eligibility from user checkboxes.
+    // Default (lazy-initialized) is all bands except ceiling.
+    const selectedFLs = ensureTripAltSelection(a);
+    const maxFl = bands.length ? Math.max(...bands.map(b => b.fl)) : null;
+    const eligibleBands = feasibleBands.filter(b => selectedFLs.has(b.fl));
+    const bestPool = eligibleBands.length ? eligibleBands : feasibleBands;
+    let bestTimeBand = null, bestCostBand = null;
+    if (bestPool.length) {
+      bestTimeBand = bestPool.reduce((p, c) => c.time < p.time ? c : p);
+      bestCostBand = bestPool.reduce((p, c) => c.cost < p.cost ? c : p);
+    }
+    const bestTimeFL = bestTimeBand ? bestTimeBand.fl : null;
+    const bestCostFL = bestCostBand ? bestCostBand.fl : null;
+
+    const nonstop = distance <= a.range_nm;
+    // Top-line numbers come from the cheapest eligible band
+    const best = bestCostBand;
+
+    return {
+      aircraft: a, bands, bestTimeFL, bestCostFL, ceilingFL: maxFl, nonstop, best,
+      bestTimeBand, bestCostBand, selectedFLs,
+      seatNm: best ? best.cost / (a.seats * distance) : Infinity,
+      costPerNm: best ? best.cost / distance : Infinity,
+      windPenalty: best ? (1 - best.groundSpeed / best.tas) : 0
+    };
+  });
+
+  // Order: nonstop first, then by best cost
+  results.sort((x, y) => {
+    if (x.nonstop !== y.nonstop) return x.nonstop ? -1 : 1;
+    if (!x.best) return 1;
+    if (!y.best) return -1;
+    return x.best.cost - y.best.cost;
+  });
+
+  lastResults = { origin, dest, distance, bearing, fuelPrice, pax, results };
+
+  // ============== render ==============
+  const summary = `
+    <div class="panel">
+      <h2 class="section-title">Trip Summary</h2>
+      <div class="results-summary">
+        <div class="summary-card">
+          <div class="label">Route</div>
+          <div class="value" style="font-size: 17px;">${origin.icao} → ${dest.icao}</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Distance</div>
+          <div class="value">${fmtNum(distance, 0)} <span class="unit">nm</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Initial Bearing</div>
+          <div class="value">${Math.round(bearing)}° <span class="unit">true</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Fuel Price</div>
+          <div class="value">$${fuelPrice.toFixed(2)} <span class="unit">/ gal</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Min Runway</div>
+          <div class="value">${fmtNum(minRwy)} <span class="unit">ft</span></div>
+        </div>
+      </div>
+      ${rwyWarnings.length ? `<div style="margin-top: 8px; color: var(--orange); font-size: 12px;">⚠ ${rwyWarnings.join(" · ")}</div>` : ""}
+    </div>
+  `;
+
+  const cards = results.map(r => {
+    const a = r.aircraft;
+    if (!r.best) {
+      return `
+        <div class="aircraft-result no-go">
+          <div class="aircraft-result-header">
+            <div class="aircraft-result-name">${a.name}
+              <span class="cat-pill ${a.category}">${a.category}</span>
+            </div>
+            <div class="aircraft-result-meta">Can't beat the headwind at any altitude</div>
+          </div>
+        </div>
+      `;
+    }
+    const rowsHTML = r.bands.map(b => {
+      const isCeiling = b.fl === r.ceilingFL;
+      const ceilingTag = isCeiling ? ` <span style="color: var(--orange); font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;">ceiling</span>` : "";
+      const isChecked = r.selectedFLs.has(b.fl);
+      const checkbox = `<label class="alt-row-check"><input type="checkbox" data-aircraft="${r.aircraft.id}" data-fl="${b.fl}" ${isChecked ? "checked" : ""} /> FL${b.fl}</label>${ceilingTag}`;
+      if (b.infeasible) {
+        return `<tr class="${isChecked ? "" : "excluded"}"><td>${checkbox}</td><td colspan="6" style="color: var(--red); text-align:left;">Ground speed ≤ 0 — wind too strong</td></tr>`;
+      }
+      const isBestTime = b.fl === r.bestTimeFL;
+      const isBestCost = b.fl === r.bestCostFL;
+      let cls = isBestCost ? "best-cost" : (isBestTime ? "best-time" : "");
+      if (!isChecked) cls += " excluded";
+      const badges = `${isBestCost ? '<span class="badge best-cost">low cost</span>' : ""}${isBestTime && !isBestCost ? '<span class="badge best-time">low time</span>' : ""}`;
+      return `<tr class="${cls.trim()}">
+        <td>${checkbox}</td>
+        <td class="num">${b.tas}</td>
+        <td class="num">${Math.round(b.hw) > 0 ? "+" + Math.round(b.hw) : Math.round(b.hw)}</td>
+        <td class="num">${Math.round(b.groundSpeed)}</td>
+        <td class="num">${fmtTime(b.time)}</td>
+        <td class="num">${fmtNum(b.fuelGal)} gal</td>
+        <td class="num">${fmtMoney(b.cost)} ${badges}</td>
+      </tr>`;
+    }).join("");
+
+    const nonstopBadge = r.nonstop
+      ? '<span class="badge nonstop">nonstop · '+ fmtNum(a.range_nm) +' nm range</span>'
+      : '<span class="badge refuel">requires fuel stop · '+ fmtNum(a.range_nm) +' nm range</span>';
+
+    return `
+      <div class="aircraft-result">
+        <div class="aircraft-result-header">
+          <div class="aircraft-result-name">
+            ${a.name}
+            <span class="cat-pill ${a.category}">${a.category}</span>
+            ${nonstopBadge}
+          </div>
+          <div class="aircraft-result-meta">
+            best ${fmtTime(r.best.time)} · ${fmtMoney(r.best.cost)} · $${r.costPerNm.toFixed(2)}/nm${pax ? ` · $${(r.best.cost/pax).toFixed(0)}/pax` : ""}
+          </div>
+        </div>
+        <table class="alt-table">
+          <thead>
+            <tr>
+              <th>Alt</th>
+              <th>TAS</th>
+              <th>Headwind</th>
+              <th>Ground</th>
+              <th>Block</th>
+              <th>Fuel</th>
+              <th>Total Cost</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>
+      </div>
+    `;
+  }).join("");
+
+  // ============== side-by-side summary table ==============
+  const summaryRows = results.map(r => {
+    const a = r.aircraft;
+    if (!r.bestTimeBand || !r.bestCostBand) {
+      return `
+        <tr>
+          <td>${a.name}<span class="cat-pill ${a.category}">${a.category}</span></td>
+          <td colspan="8" style="color: var(--muted); text-align: left;">No eligible altitudes — wind too strong or all unchecked</td>
+        </tr>
+      `;
+    }
+    const bt = r.bestTimeBand, bc = r.bestCostBand;
+    const ns = r.nonstop
+      ? '<span class="badge nonstop">nonstop</span>'
+      : '<span class="badge refuel">fuel stop</span>';
+    return `
+      <tr>
+        <td>${a.name}<span class="cat-pill ${a.category}">${a.category}</span></td>
+        <td class="num"><strong>${fmtTime(bt.time)}</strong></td>
+        <td class="num fl">FL${bt.fl}</td>
+        <td class="num">${fmtMoney(bt.cost)}</td>
+        <td class="num divider"><strong>${fmtMoney(bc.cost)}</strong></td>
+        <td class="num fl">FL${bc.fl}</td>
+        <td class="num">${fmtTime(bc.time)}</td>
+        <td class="num">$${(bc.cost / distance).toFixed(2)}<span class="sub-num">/nm</span></td>
+        <td class="num">${ns}</td>
+      </tr>
+    `;
+  }).join("");
+
+  const summaryTable = `
+    <div class="panel" style="margin-top: 18px;">
+      <h2 class="section-title">Side-by-Side — Best Time vs Best Cost</h2>
+      <div class="table-wrap">
+        <table class="trip-summary">
+          <thead>
+            <tr>
+              <th rowspan="2">Aircraft</th>
+              <th colspan="3">Best Time</th>
+              <th colspan="3" class="divider">Best Cost</th>
+              <th rowspan="2">$ / nm</th>
+              <th rowspan="2">Status</th>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <th>FL</th>
+              <th>Cost</th>
+              <th class="divider">Cost</th>
+              <th>FL</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>${summaryRows}</tbody>
+        </table>
+      </div>
+      <p style="font-size: 11px; color: var(--muted); margin: 10px 0 0;">
+        "Best" is computed from the altitudes you've checked per aircraft (defaults to all bands except ceiling). Toggle individual altitudes in the per-aircraft cards below.
+      </p>
+    </div>
+  `;
+
+  // ============== comparison chart ==============
+  const chartResults = results.filter(r => r.bestCostBand);
+  const chartMax = chartResults.length ? Math.max(...chartResults.map(r => r.bestCostBand.cost)) : 1;
+  const chartBarsCost = chartResults
+    .slice()
+    .sort((x, y) => x.bestCostBand.cost - y.bestCostBand.cost)
+    .map(r => {
+      const pct = (r.bestCostBand.cost / chartMax) * 100;
+      return `
+        <div class="cost-row">
+          <div class="label">${r.aircraft.name} <span style="color: var(--muted); font-weight: 400;">@ FL${r.bestCostBand.fl}</span></div>
+          <div class="bar-container"><div class="bar-stack"><div class="bar-segment bar-fuel" style="width: ${pct}%"></div></div></div>
+          <div class="cost-value">${fmtMoney(r.bestCostBand.cost)}<span class="unit">trip</span></div>
+        </div>
+      `;
+    }).join("");
+
+  // Block-time chart: fastest aircraft = baseline (0), others show "+H:MM" delta
+  const chartTimeSorted = chartResults.slice().sort((x, y) => x.bestTimeBand.time - y.bestTimeBand.time);
+  const fastestTime = chartTimeSorted.length ? chartTimeSorted[0].bestTimeBand.time : 0;
+  const slowestTime = chartTimeSorted.length ? chartTimeSorted[chartTimeSorted.length - 1].bestTimeBand.time : 0;
+  const maxTimeDelta = slowestTime - fastestTime;
+  const safeMaxDelta = maxTimeDelta > 0 ? maxTimeDelta : 1;
+  const chartBarsTime = chartTimeSorted.map((r, idx) => {
+    const delta = r.bestTimeBand.time - fastestTime;
+    const pct = (delta / safeMaxDelta) * 100;
+    const isFastest = idx === 0;
+    const deltaLabel = isFastest
+      ? `<span style="color: var(--gold);">fastest</span>`
+      : (delta < 1/60
+        ? `<span style="color: var(--gold);">tied</span>`
+        : `+${fmtTime(delta)}`);
+    return `
+      <div class="cost-row">
+        <div class="label">${r.aircraft.name} <span style="color: var(--muted); font-weight: 400;">@ FL${r.bestTimeBand.fl}</span></div>
+        <div class="bar-container"><div class="bar-stack"><div class="bar-segment bar-mx" style="width: ${pct}%"></div></div></div>
+        <div class="cost-value">${deltaLabel}<span class="unit">${fmtTime(r.bestTimeBand.time)} block</span></div>
+      </div>
+    `;
+  }).join("");
+
+  const chartPanel = chartResults.length ? `
+    <div class="panel" style="margin-top: 18px;">
+      <h2 class="section-title">Comparison Chart</h2>
+      <div class="chart-controls">
+        <div class="field">
+          <label>Show</label>
+          <select id="trip-chart-mode">
+            <option value="cost" selected>Total trip cost</option>
+            <option value="time">Block time</option>
+          </select>
+        </div>
+      </div>
+      <div id="trip-chart" class="cost-chart" data-cost='${encodeURIComponent(chartBarsCost)}' data-time='${encodeURIComponent(chartBarsTime)}'>${chartBarsCost}</div>
+    </div>
+  ` : "";
+
+  container.innerHTML = summary + summaryTable + chartPanel + `<div class="panel" style="margin-top: 18px;"><h2 class="section-title">Per-Aircraft Altitude Detail</h2>${cards}</div>`;
+
+  // wire up alt-row checkboxes
+  container.querySelectorAll(".alt-row-check input[type=checkbox]").forEach(cb => {
+    cb.addEventListener("change", () => {
+      const id = cb.dataset.aircraft;
+      const fl = parseInt(cb.dataset.fl, 10);
+      ensureTripAltSelection(AIRCRAFT.find(a => a.id === id));
+      if (cb.checked) tripAltSelection[id].add(fl);
+      else tripAltSelection[id].delete(fl);
+      calcTrip();
+    });
+  });
+
+  // wire up trip chart mode toggle
+  const tcm = document.getElementById("trip-chart-mode");
+  if (tcm) {
+    tcm.addEventListener("change", () => {
+      const chart = document.getElementById("trip-chart");
+      const data = tcm.value === "time" ? chart.dataset.time : chart.dataset.cost;
+      chart.innerHTML = decodeURIComponent(data);
+    });
+  }
+}
+
+/* ============================================================
+   VALUE ESTIMATOR
+   Heuristic age + hours based valuation. Not a substitute for
+   Aircraft Bluebook, Vref, JetNet, or an ASA appraisal.
+============================================================ */
+
+// Depreciation curve: % of new price remaining at each age (years).
+// Values reflect typical biz-jet residual curves: aggressive early,
+// flattens toward a long-tail residual past ~30 years.
+const DEPRECIATION_CURVE = [
+  [0,  1.00], [1, 0.85], [2, 0.74], [3, 0.66], [5, 0.55],
+  [7, 0.46], [10, 0.38], [15, 0.28], [20, 0.22],
+  [25, 0.18], [30, 0.16], [40, 0.13], [50, 0.11]
+];
+
+function depFactor(age) {
+  if (age <= DEPRECIATION_CURVE[0][0]) return DEPRECIATION_CURVE[0][1];
+  const last = DEPRECIATION_CURVE[DEPRECIATION_CURVE.length - 1];
+  if (age >= last[0]) return last[1];
+  for (let i = 0; i < DEPRECIATION_CURVE.length - 1; i++) {
+    const [y1, p1] = DEPRECIATION_CURVE[i];
+    const [y2, p2] = DEPRECIATION_CURVE[i + 1];
+    if (age >= y1 && age <= y2) {
+      const w = (age - y1) / (y2 - y1);
+      return p1 * (1 - w) + p2 * w;
+    }
+  }
+  return last[1];
+}
+
+function estimateValue(aircraftId, year, hours) {
+  const a = AIRCRAFT.find(x => x.id === aircraftId);
+  const v = AIRCRAFT_VALUATION[aircraftId];
+  if (!a || !v) return { error: "Aircraft not found." };
+
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - year;
+
+  if (!Number.isFinite(year)) return { error: "Enter a year of manufacture." };
+  if (!Number.isFinite(hours) || hours < 0) return { error: "Enter total hours (≥ 0)." };
+  if (age < 0) return { error: "Year of manufacture is in the future." };
+  if (year < v.prod_start) {
+    return { error: `${a.name} production began in ${v.prod_start}. Pick a year ≥ ${v.prod_start}.` };
+  }
+  if (v.prod_end && year > v.prod_end + 1) {
+    return { error: `${a.name} production ended in ${v.prod_end}. Pick a year ≤ ${v.prod_end + 1}.` };
+  }
+
+  const pct = depFactor(age);
+  const ageBased = v.new_price * pct;
+
+  // Hours adjustment vs typical utilization (~380 hr/yr).
+  // Over: -0.75% per 100 hrs. Under: +0.40% per 100 hrs. Capped ±25%.
+  const expectedHours = Math.max(age, 1) * 380;
+  const hoursDelta = hours - expectedHours;
+  let hoursAdj;
+  if (hoursDelta > 0) hoursAdj = -(hoursDelta / 100) * 0.0075;
+  else hoursAdj = (-hoursDelta / 100) * 0.0040;
+  hoursAdj = Math.max(-0.25, Math.min(0.25, hoursAdj));
+
+  const afterHours = ageBased * (1 + hoursAdj);
+
+  // Residual floor: ~70% of the model's current acquisition low quote.
+  const floor = a.acquisition.low * 0.70;
+  const mid = Math.max(afterHours, floor);
+
+  return {
+    aircraft: a, year, age, hours, expectedHours, hoursDelta,
+    new_price: v.new_price, pct, age_based: ageBased,
+    hours_adj_pct: hoursAdj, after_hours: afterHours,
+    floor, mid,
+    low: mid * 0.85,
+    high: mid * 1.15
+  };
+}
+
+function renderValueResult() {
+  const aircraftId = document.getElementById("val-aircraft").value;
+  const year = parseInt(document.getElementById("val-year").value, 10);
+  const hours = parseInt(document.getElementById("val-hours").value, 10);
+  const out = document.getElementById("val-result");
+
+  if (!aircraftId) {
+    out.innerHTML = "";
+    return;
+  }
+  const r = estimateValue(aircraftId, year, hours);
+  if (r.error) {
+    out.innerHTML = `<div class="placeholder" style="color: var(--red);">${r.error}</div>`;
+    return;
+  }
+
+  const utilLabel = r.hoursDelta > 0
+    ? `${Math.round(r.hoursDelta).toLocaleString()} hrs above typical`
+    : r.hoursDelta < 0
+      ? `${Math.round(-r.hoursDelta).toLocaleString()} hrs below typical`
+      : "right at typical";
+  const adjLabel = r.hours_adj_pct >= 0
+    ? `+${(r.hours_adj_pct * 100).toFixed(1)}%`
+    : `${(r.hours_adj_pct * 100).toFixed(1)}%`;
+  const floorApplied = r.mid > r.after_hours - 1 ? "" : " (floor applied)";
+
+  out.innerHTML = `
+    <div class="val-result-grid">
+      <div class="val-card">
+        <div class="val-label">Low</div>
+        <div class="val-amount">${fmtMoneyShort(r.low)}</div>
+        <div class="val-sub">conservative</div>
+      </div>
+      <div class="val-card mid">
+        <div class="val-label">Mid Estimate</div>
+        <div class="val-amount">${fmtMoneyShort(r.mid)}</div>
+        <div class="val-sub">central estimate</div>
+      </div>
+      <div class="val-card">
+        <div class="val-label">High</div>
+        <div class="val-amount">${fmtMoneyShort(r.high)}</div>
+        <div class="val-sub">strong-spec example</div>
+      </div>
+    </div>
+
+    <div class="val-breakdown">
+      <h3>How we got there</h3>
+      <table>
+        <tr><td>Model</td><td>${r.aircraft.name}</td></tr>
+        <tr><td>Year / Age</td><td>${r.year} (${r.age} ${r.age === 1 ? "year" : "years"} old)</td></tr>
+        <tr><td>Total time</td><td>${r.hours.toLocaleString()} hrs</td></tr>
+        <tr><td>Typical hours at this age (~380 hr/yr)</td><td>${Math.round(r.expectedHours).toLocaleString()} hrs</td></tr>
+        <tr><td>Utilization vs typical</td><td>${utilLabel} → <span style="color: var(--gold);">${adjLabel}</span></td></tr>
+        <tr><td>New price (when last produced)</td><td>${fmtMoneyShort(r.new_price)}</td></tr>
+        <tr><td>Depreciation factor at age ${r.age}</td><td>${(r.pct * 100).toFixed(1)}% of new</td></tr>
+        <tr><td>Age-based value</td><td>${fmtMoneyShort(r.age_based)}</td></tr>
+        <tr><td>After hours adjustment</td><td>${fmtMoneyShort(r.after_hours)}</td></tr>
+        <tr><td>Residual floor</td><td>${fmtMoneyShort(r.floor)}${floorApplied}</td></tr>
+        <tr><td><strong>Mid estimate</strong></td><td><strong>${fmtMoneyShort(r.mid)}</strong></td></tr>
+      </table>
+    </div>
+
+    <div class="val-disclaimer">
+      <strong>Reality check.</strong> This is a curve-based estimate. The biggest swings in real-world price are <strong>engine time remaining</strong>, <strong>MX program enrollment</strong> (CAMP/JSSI/MSP/ESP/Corporate Care), <strong>recent paint &amp; interior</strong>, and <strong>FANS/ADS-B/CPDLC</strong> avionics. Two ${r.aircraft.name}s of the same year and hours can sell ±30% apart on those factors alone. Use this to triangulate, then confirm with Aircraft Bluebook, Vref, JetNet, or an appraiser before quoting or transacting.
+    </div>
+  `;
+}
+
+function populateValueAircraftSelect() {
+  const sel = document.getElementById("val-aircraft");
+  // Group by manufacturer in the select
+  const byMfr = {};
+  for (const a of AIRCRAFT) {
+    if (!AIRCRAFT_VALUATION[a.id]) continue;
+    (byMfr[a.manufacturer] = byMfr[a.manufacturer] || []).push(a);
+  }
+  const order = ["Dassault", "Cessna", "Gulfstream", "Bombardier", "Embraer", "Hawker"];
+  sel.innerHTML = `<option value="">Select model…</option>` +
+    order.filter(m => byMfr[m]).map(mfr => `
+      <optgroup label="${mfr}">
+        ${byMfr[mfr].map(a => `<option value="${a.id}">${a.name}</option>`).join("")}
+      </optgroup>
+    `).join("");
+}
+
+/* ============================================================
+   TAB SWITCHING
+============================================================ */
+
+function setupTabs() {
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("view-" + tab.dataset.view).classList.add("active");
+    });
+  });
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+
+function init() {
+  setupTabs();
+  buildWindGrid();
+  setupTypeahead("origin", "origin-list");
+  setupTypeahead("dest", "dest-list");
+  renderCompareSelector();
+  renderMXToggles();
+  renderSideBySideSpecs();
+  renderCompareTable();
+  renderCostChart();
+  renderAircraftSelector();
+
+  // Compare-tab selector bulk controls
+  document.querySelectorAll("[data-compare-action]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.compareAction;
+      compareSelectedAircraft.clear();
+      if (action === "all") AIRCRAFT.forEach(a => compareSelectedAircraft.add(a.id));
+      else if (action === "typical") TYPICAL_COMPARE.forEach(id => compareSelectedAircraft.add(id));
+      renderCompareSelector();
+      refreshCompareViews();
+    });
+  });
+
+  ["chart-altitude", "chart-fuel", "chart-mode"].forEach(id => {
+    document.getElementById(id).addEventListener("input", renderCostChart);
+  });
+
+  renderCustomPicker();
+  renderCustomChart();
+  ["custom-fuel", "custom-mode"].forEach(id => {
+    document.getElementById(id).addEventListener("input", renderCustomChart);
+  });
+  document.getElementById("custom-typical").addEventListener("click", () => setCustomAltitudes("typical"));
+  document.getElementById("custom-allbands").addEventListener("click", () => setCustomAltitudes("all"));
+  document.getElementById("custom-clear").addEventListener("click", () => setCustomAltitudes("clear"));
+
+  // Value estimator
+  populateValueAircraftSelect();
+  document.getElementById("val-btn").addEventListener("click", renderValueResult);
+  ["val-aircraft", "val-year", "val-hours"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      // live-update only if the user has already triggered an estimate
+      if (document.getElementById("val-result").innerHTML.trim() !== "") {
+        renderValueResult();
+      }
+    });
+  });
+  document.getElementById("val-year").addEventListener("keydown", e => {
+    if (e.key === "Enter") renderValueResult();
+  });
+  document.getElementById("val-hours").addEventListener("keydown", e => {
+    if (e.key === "Enter") renderValueResult();
+  });
+
+  document.querySelectorAll("#compare-table thead th").forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.sort;
+      if (sortState.col === col) sortState.asc = !sortState.asc;
+      else { sortState.col = col; sortState.asc = false; }
+      renderCompareTable();
+    });
+  });
+
+  ["filter-category", "filter-mfr", "filter-range", "filter-seats"].forEach(id => {
+    document.getElementById(id).addEventListener("input", renderCompareTable);
+  });
+
+  document.getElementById("calc-btn").addEventListener("click", calcTrip);
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    resetWinds();
+    document.getElementById("wind-status").classList.remove("show");
+  });
+  document.getElementById("fetch-winds-btn").addEventListener("click", fetchTodayWinds);
+
+  // Select All / Clear for aircraft selector
+  document.querySelectorAll("[data-select-action]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.selectAction;
+      selectedAircraft.clear();
+      if (action === "all") AIRCRAFT.forEach(a => selectedAircraft.add(a.id));
+      renderAircraftSelector();
+    });
+  });
+
+  // Enter in either ICAO field triggers calculate
+  ["origin", "dest"].forEach(id => {
+    document.getElementById(id).addEventListener("keydown", e => {
+      if (e.key === "Enter") calcTrip();
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>

@@ -55,6 +55,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 60px;height:72px;d
 .corner-compass{position:absolute;top:96px;right:48px;width:170px;height:170px;opacity:.15;pointer-events:none;z-index:1;view-transition-name:compass;}
 @view-transition{navigation:auto;}
 ::view-transition-group(compass){animation-duration:700ms;animation-timing-function:cubic-bezier(.16,1,.3,1);}
+::view-transition-old(compass){animation:700ms cubic-bezier(.16,1,.3,1) both compass-out;}
+::view-transition-new(compass){animation:700ms cubic-bezier(.16,1,.3,1) both compass-in;}
+@keyframes compass-out{to{opacity:0;rotate:var(--rot-out,-90deg);}}
+@keyframes compass-in{from{opacity:0;rotate:var(--rot-in,90deg);}to{opacity:1;rotate:0deg;}}
+@media (prefers-reduced-motion: reduce){::view-transition-old(compass),::view-transition-new(compass){animation-duration:0ms;}}
 .thesis-block{background:var(--warm-white);padding:100px 60px 80px;border-bottom:1px solid var(--mist);}
 .thesis-inner{max-width:900px;margin:0 auto;text-align:center;}
 .section-label{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
@@ -109,6 +114,17 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   .founder-portrait-wrap::before{width:calc(100% - 12px);height:calc(100% - 12px);}
 }
 </style>
+<script>
+(function(){
+  var ref = document.referrer || '';
+  var onHome = /j3taviation\.com\/?(?:index\.html)?(?:[?#]|$)/.test(location.href);
+  var fromHome = /^https?:\/\/(?:www\.)?j3taviation\.com\/?(?:index\.html)?(?:[?#]|$)/.test(ref);
+  var inDeg = 90, outDeg = -90;
+  if (onHome && ref.indexOf('j3taviation.com') !== -1 && !fromHome){inDeg = -90; outDeg = 90;}
+  document.documentElement.style.setProperty('--rot-in',  inDeg  + 'deg');
+  document.documentElement.style.setProperty('--rot-out', outDeg + 'deg');
+})();
+</script>
 </head>
 <body>
 <div class="cursor" id="cursor"></div>

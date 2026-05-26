@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>J3T Jet Data — Cost & Performance Compare</title>
+<title>J3T Jet Data | Cost & Performance Compare</title>
 <meta name="theme-color" content="#d4af37" />
 <style>
   :root {
@@ -813,7 +813,7 @@
     <div class="panel" id="mx-program-panel">
       <h2 class="section-title">Specialized Maintenance Program</h2>
       <p style="font-size: 12px; color: var(--muted); margin: -6px 0 14px; max-width: 720px;">
-        Operators of select Citations qualify for a program that reduces airframe maintenance reserves by ~50%. Toggle the aircraft below to apply the discount — it flows through every $/hr, $/trip, chart, and side-by-side number on this tab and in the Trip Calculator. Engine and APU reserves are not affected (those are separate OEM programs).
+        Operators of select Citations qualify for a program that reduces airframe maintenance reserves by ~50%. Toggle the aircraft below to apply the discount. It flows through every $/hr, $/trip, chart, and side-by-side number on this tab and in the Trip Calculator. Engine and APU reserves are not affected (those are separate OEM programs).
       </p>
       <div class="mx-toggles" id="mx-toggles"></div>
     </div>
@@ -938,7 +938,7 @@
     </div>
 
     <div class="footer-note">
-      <strong>Data notes.</strong> Performance specs (cruise, range, ceiling, dimensions, fuel burn) are drawn from manufacturer published figures and B&amp;CA Operations Planning Guide values, typical mid-life examples. Hourly cost components (maintenance reserves, engine reserves) are industry averages from operator surveys and Conklin &amp; de Decker reports — they vary materially by airframe age, MX program enrollment (CAMP/CESCOM/MSP), and operator. Treat these as starting points and verify against your own MX provider and fuel cards.
+      <strong>Data notes.</strong> Performance specs (cruise, range, ceiling, dimensions, fuel burn) are drawn from manufacturer published figures and B&amp;CA Operations Planning Guide values, typical mid-life examples. Hourly cost components (maintenance reserves, engine reserves) are industry averages from operator surveys and Conklin &amp; de Decker reports. They vary materially by airframe age, MX program enrollment (CAMP/CESCOM/MSP), and operator. Treat these as starting points and verify against your own MX provider and fuel cards.
       <br><br>
       <strong>Variable $/hr</strong> = fuel + MX reserves + engine/APU reserves. It excludes crew, hangar, insurance, and amortization. Performance at non-tabulated altitudes is linearly interpolated between the nearest aircraft altitude bands. Aircraft are marked "above ceiling" if the selected altitude exceeds their service ceiling.
     </div>
@@ -982,7 +982,7 @@
             </div>
             <div class="field" style="flex: 1;">
               <label>Passengers (optional)</label>
-              <input type="number" id="pax" placeholder="—" min="0" max="20" />
+              <input type="number" id="pax" placeholder="0" min="0" max="20" />
             </div>
             <div class="field" style="flex: 1;">
               <label>Min Runway (ft)</label>
@@ -996,7 +996,7 @@
 
         <div>
           <label style="font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">
-            Winds Aloft — Direction (°true wind FROM) &amp; Speed (kt)
+            Winds Aloft: Direction (°true wind FROM) &amp; Speed (kt)
           </label>
           <div class="wind-grid" id="wind-grid"></div>
           <div class="wind-actions">
@@ -1044,10 +1044,10 @@
 
     <div class="footer-note">
       <strong>What this includes:</strong> baseline depreciation from new price by age, adjustment for total hours vs typical utilization (~380 hr/yr), and a residual-value floor based on the model's current low market quote.<br><br>
-      <strong>What this does NOT include — and what often matters more:</strong>
+      <strong>What this does NOT include (and what often matters more):</strong>
       <ul style="margin: 6px 0 0 18px; padding: 0;">
-        <li>Engine time remaining to overhaul (can swing value $1–4M on heavy jets)</li>
-        <li>MX program enrollment — CAMP, JSSI, MSP, ESP, Corporate Care, etc.</li>
+        <li>Engine time remaining to overhaul (can swing value $1-4M on heavy jets)</li>
+        <li>MX program enrollment: CAMP, JSSI, MSP, ESP, Corporate Care, etc.</li>
         <li>APU time remaining</li>
         <li>FANS 1/A, CPDLC, ADS-B Out, EVS/SVS avionics upgrades</li>
         <li>Recent paint and interior refurbishment</li>
@@ -1065,7 +1065,7 @@
       <h2 class="section-title">Notes &amp; Methodology</h2>
 
       <h3>What this is</h3>
-      <p>An apples-to-apples cost and performance comparator for the J3T fleet survey set: 22 business jets across Dassault, Cessna, Gulfstream, and Bombardier. Two tools — a comparison table for browsing, and a trip calculator that estimates fuel, time, and total trip cost at four cruise altitudes per aircraft, accounting for winds aloft.</p>
+      <p>An apples-to-apples cost and performance comparator for the J3T fleet survey set: 22 business jets across Dassault, Cessna, Gulfstream, and Bombardier. Two tools: a comparison table for browsing, and a trip calculator that estimates fuel, time, and total trip cost at four cruise altitudes per aircraft, accounting for winds aloft.</p>
 
       <h3>How costs are computed</h3>
       <p>Hourly cost is broken into <strong>variable</strong> (per flight hour) components:</p>
@@ -1074,7 +1074,7 @@
         <li><strong>MX reserves</strong> = an hourly accrual toward airframe maintenance events, scheduled inspections, and parts replacements.</li>
         <li><strong>Engine / APU reserves</strong> = hourly accrual toward engine overhauls and APU events. On programs like MSP, ESP, or Corporate Care this becomes a fixed per-hour fee paid to the OEM.</li>
       </ul>
-      <p>Fixed annual costs (crew, hangar, insurance, training) are not included in the trip calculator since they don't vary with the trip — they amortize against your annual hours. Add roughly $1,500–$3,000 per hour depending on aircraft size and annual utilization if you want a true all-in number.</p>
+      <p>Fixed annual costs (crew, hangar, insurance, training) are not included in the trip calculator since they don't vary with the trip. They amortize against your annual hours. Add roughly $1,500 to $3,000 per hour depending on aircraft size and annual utilization if you want a true all-in number.</p>
 
       <h3>Trip math</h3>
       <p>Distance is great-circle (haversine) between the two ICAOs. Initial bearing is used to resolve the wind at each cruise altitude into a headwind/tailwind component:</p>
@@ -1082,16 +1082,16 @@
       <p>Ground speed = TAS − headwind. Block time = (distance ÷ ground speed) + 0.3 hr taxi/climb/descent overhead. Fuel and reserves accrue against block time.</p>
 
       <h3>Nonstop feasibility</h3>
-      <p>An aircraft is flagged <strong>nonstop</strong> when great-circle distance ≤ its published NBAA-IFR range. Real-world fuel planning trims this further for weather, weight, alternates, and reserves — treat the boolean as "in the ballpark," not as a dispatch decision.</p>
+      <p>An aircraft is flagged <strong>nonstop</strong> when great-circle distance ≤ its published NBAA-IFR range. Real-world fuel planning trims this further for weather, weight, alternates, and reserves. Treat the boolean as "in the ballpark," not as a dispatch decision.</p>
 
       <h3>Wind altitude bands</h3>
       <p>Winds are entered at the eight standard winds-aloft levels for jets: <code>FL180, FL240, FL300, FL340, FL370, FL410, FL450, FL510</code>. Each aircraft's altitude band uses the nearest entered layer.</p>
 
       <h3>Data sources &amp; confidence</h3>
       <ul>
-        <li><strong>Performance specs</strong> — manufacturer type certificate data sheets, AFM/POH performance tables, and Aviation Week aircraft surveys. High confidence.</li>
-        <li><strong>Fuel burn</strong> — published long-range and high-speed cruise figures. High confidence at typical-cruise altitude; less precise at extreme altitudes.</li>
-        <li><strong>Hourly costs</strong> — B&amp;CA Operations Planning Guide (annual) and Conklin &amp; de Decker model reports. Medium confidence — figures shift year-over-year and vary materially by operator. Verify against your MX provider and fuel cards before quoting.</li>
+        <li><strong>Performance specs:</strong> manufacturer type certificate data sheets, AFM/POH performance tables, and Aviation Week aircraft surveys. High confidence.</li>
+        <li><strong>Fuel burn:</strong> published long-range and high-speed cruise figures. High confidence at typical-cruise altitude; less precise at extreme altitudes.</li>
+        <li><strong>Hourly costs:</strong> B&amp;CA Operations Planning Guide (annual) and Conklin &amp; de Decker model reports. Medium confidence. Figures shift year-over-year and vary materially by operator. Verify against your MX provider and fuel cards before quoting.</li>
         <li><strong>Older variants</strong> (Challenger 600, Falcon 2000DX, 900DX) have thinner public cost data than current-production aircraft. Numbers are conservative estimates.</li>
       </ul>
 
@@ -1099,7 +1099,7 @@
       <ul>
         <li><strong>Dassault</strong>: Falcon 50, Falcon 2000 (DX/EX/LXS), Falcon 900 (DX/EX/LX)</li>
         <li><strong>Cessna Citation</strong>: V/Ultra (560), XLS+, Sovereign (680), Sovereign+, Latitude, X, X+</li>
-        <li><strong>Gulfstream</strong>: GIV, GV, G280, G450, G500 (GV-SP derivative, 2003–2008), G500 (clean-sheet, 2018+), G550</li>
+        <li><strong>Gulfstream</strong>: GIV, GV, G280, G450, G500 (GV-SP derivative, 2003-2008), G500 (clean-sheet, 2018+), G550</li>
         <li><strong>Bombardier Challenger</strong>: 600, 601, 350</li>
         <li><strong>Embraer</strong>: Praetor 500, Praetor 600, Legacy 600, Legacy 650</li>
         <li><strong>Hawker</strong>: 900XP</li>
@@ -1616,13 +1616,13 @@ const AIRPORTS = [
   { icao: "KACK", name: "Nantucket Memorial", city: "Nantucket, MA", country: "US", lat: 41.2531, lon: -70.0602, rwy: 6303 },
 
   // --- USA: Southeast ---
-  { icao: "KATL", name: "Hartsfield–Jackson", city: "Atlanta, GA", country: "US", lat: 33.6367, lon: -84.4281, rwy: 12390 },
+  { icao: "KATL", name: "Hartsfield-Jackson", city: "Atlanta, GA", country: "US", lat: 33.6367, lon: -84.4281, rwy: 12390 },
   { icao: "KPDK", name: "DeKalb-Peachtree", city: "Atlanta, GA", country: "US", lat: 33.8757, lon: -84.3019, rwy: 6001 },
   { icao: "KFTY", name: "Fulton County / Brown Field", city: "Atlanta, GA", country: "US", lat: 33.7790, lon: -84.5214, rwy: 5796 },
   { icao: "KMIA", name: "Miami Intl", city: "Miami, FL", country: "US", lat: 25.7932, lon: -80.2906, rwy: 13016 },
   { icao: "KOPF", name: "Miami-Opa Locka Executive", city: "Opa-locka, FL", country: "US", lat: 25.9070, lon: -80.2784, rwy: 8002 },
   { icao: "KTMB", name: "Miami Executive", city: "Miami, FL", country: "US", lat: 25.6479, lon: -80.4328, rwy: 5002 },
-  { icao: "KFLL", name: "Fort Lauderdale–Hollywood", city: "Fort Lauderdale, FL", country: "US", lat: 26.0726, lon: -80.1527, rwy: 9000 },
+  { icao: "KFLL", name: "Fort Lauderdale-Hollywood", city: "Fort Lauderdale, FL", country: "US", lat: 26.0726, lon: -80.1527, rwy: 9000 },
   { icao: "KFXE", name: "Fort Lauderdale Executive", city: "Fort Lauderdale, FL", country: "US", lat: 26.1973, lon: -80.1707, rwy: 6001 },
   { icao: "KPBI", name: "Palm Beach Intl", city: "West Palm Beach, FL", country: "US", lat: 26.6832, lon: -80.0956, rwy: 10001 },
   { icao: "KBCT", name: "Boca Raton", city: "Boca Raton, FL", country: "US", lat: 26.3785, lon: -80.1077, rwy: 6276 },
@@ -1631,7 +1631,7 @@ const AIRPORTS = [
   { icao: "KAPF", name: "Naples Muni", city: "Naples, FL", country: "US", lat: 26.1526, lon: -81.7752, rwy: 6600 },
   { icao: "KSRQ", name: "Sarasota-Bradenton", city: "Sarasota, FL", country: "US", lat: 27.3954, lon: -82.5544, rwy: 9500 },
   { icao: "KTPA", name: "Tampa Intl", city: "Tampa, FL", country: "US", lat: 27.9755, lon: -82.5332, rwy: 11002 },
-  { icao: "KPIE", name: "St. Petersburg–Clearwater", city: "St. Petersburg, FL", country: "US", lat: 27.9102, lon: -82.6874, rwy: 8500 },
+  { icao: "KPIE", name: "St. Petersburg-Clearwater", city: "St. Petersburg, FL", country: "US", lat: 27.9102, lon: -82.6874, rwy: 8500 },
   { icao: "KJAX", name: "Jacksonville Intl", city: "Jacksonville, FL", country: "US", lat: 30.4941, lon: -81.6879, rwy: 10000 },
   { icao: "KCLT", name: "Charlotte Douglas", city: "Charlotte, NC", country: "US", lat: 35.2140, lon: -80.9431, rwy: 10000 },
   { icao: "KRDU", name: "Raleigh-Durham", city: "Raleigh, NC", country: "US", lat: 35.8776, lon: -78.7875, rwy: 10000 },
@@ -1730,7 +1730,7 @@ const AIRPORTS = [
   { icao: "CYYZ", name: "Toronto Pearson", city: "Toronto, ON", country: "CA", lat: 43.6772, lon: -79.6306, rwy: 11120 },
   { icao: "CYTZ", name: "Billy Bishop Toronto City", city: "Toronto, ON", country: "CA", lat: 43.6275, lon: -79.3963, rwy: 3988 },
   { icao: "CYKZ", name: "Buttonville Muni", city: "Toronto, ON", country: "CA", lat: 43.8622, lon: -79.3700, rwy: 5000 },
-  { icao: "CYUL", name: "Montréal–Trudeau", city: "Montréal, QC", country: "CA", lat: 45.4706, lon: -73.7408, rwy: 11000 },
+  { icao: "CYUL", name: "Montréal-Trudeau", city: "Montréal, QC", country: "CA", lat: 45.4706, lon: -73.7408, rwy: 11000 },
   { icao: "CYHU", name: "Saint-Hubert", city: "Montréal, QC", country: "CA", lat: 45.5175, lon: -73.4169, rwy: 7800 },
   { icao: "CYOW", name: "Ottawa Macdonald-Cartier", city: "Ottawa, ON", country: "CA", lat: 45.3225, lon: -75.6692, rwy: 10000 },
   { icao: "CYQB", name: "Québec City Jean Lesage", city: "Québec City, QC", country: "CA", lat: 46.7911, lon: -71.3933, rwy: 9000 },
@@ -1913,7 +1913,7 @@ const AIRPORTS = [
   { icao: "WSSS", name: "Changi", city: "Singapore", country: "SG", lat: 1.3592, lon: 103.9894, rwy: 13124 },
   { icao: "WSSL", name: "Seletar", city: "Singapore", country: "SG", lat: 1.4170, lon: 103.8675, rwy: 6017 },
   { icao: "WMKK", name: "Kuala Lumpur Intl", city: "Kuala Lumpur", country: "MY", lat: 2.7456, lon: 101.7099, rwy: 13288 },
-  { icao: "WIII", name: "Soekarno–Hatta", city: "Jakarta", country: "ID", lat: -6.1256, lon: 106.6559, rwy: 12008 },
+  { icao: "WIII", name: "Soekarno-Hatta", city: "Jakarta", country: "ID", lat: -6.1256, lon: 106.6559, rwy: 12008 },
   { icao: "WBSB", name: "Brunei Intl", city: "Bandar Seri Begawan", country: "BN", lat: 4.9442, lon: 114.9282, rwy: 12009 },
   { icao: "VVNB", name: "Noi Bai Intl", city: "Hanoi", country: "VN", lat: 21.2212, lon: 105.8074, rwy: 12466 },
   { icao: "VVTS", name: "Tan Son Nhat", city: "Ho Chi Minh City", country: "VN", lat: 10.8188, lon: 106.6519, rwy: 12468 },
@@ -1946,14 +1946,14 @@ const TAXI_OVERHEAD_HR = 0.3;
 const winds = {}; // { 180: {dir, spd}, ... }
 WIND_LEVELS.forEach(fl => winds[fl] = { dir: 0, spd: 0 });
 
-const FUEL_DENSITY = 6.7; // lbs/gal for Jet A — informational only
+const FUEL_DENSITY = 6.7; // lbs/gal for Jet A, informational only
 let sortState = { col: "range", asc: false };
 let lastResults = null;
 
-// Aircraft selection state — default all selected
+// Aircraft selection state, default all selected
 const selectedAircraft = new Set(AIRCRAFT.map(a => a.id));
 
-// Compare-tab aircraft selection — separate state, defaults to 4 typical aircraft
+// Compare-tab aircraft selection; separate state, defaults to 4 typical aircraft
 // covering categories. Filters the Compare-tab side-by-side, table, cost chart,
 // and custom altitude views.
 const TYPICAL_COMPARE = ["citation-latitude", "challenger-350", "falcon-2000lxs", "gulfstream-g550"];
@@ -1984,7 +1984,7 @@ function ensureTripAltSelection(aircraft) {
 }
 
 // Approximate when-new MSRP and production years for each model.
-// Used by the Value Estimator. Figures are rounded ballpark — real
+// Used by the Value Estimator. Figures are rounded ballpark; real
 // values varied year-to-year within each production run.
 const AIRCRAFT_VALUATION = {
   "falcon-50":           { new_price: 12500000, prod_start: 1979, prod_end: 1994 },
@@ -2077,23 +2077,23 @@ function windForAltitude(fl) {
 }
 
 function fmtMoney(n) {
-  if (!isFinite(n)) return "—";
+  if (!isFinite(n)) return "n/a";
   return "$" + Math.round(n).toLocaleString("en-US");
 }
 function fmtMoneyShort(n) {
-  if (!isFinite(n)) return "—";
+  if (!isFinite(n)) return "n/a";
   if (n >= 1e6) return "$" + (n/1e6).toFixed(1) + "M";
   if (n >= 1e3) return "$" + (n/1e3).toFixed(1) + "K";
   return "$" + Math.round(n);
 }
 function fmtTime(hrs) {
-  if (!isFinite(hrs) || hrs <= 0) return "—";
+  if (!isFinite(hrs) || hrs <= 0) return "n/a";
   const h = Math.floor(hrs);
   const m = Math.round((hrs - h) * 60);
   return h + ":" + String(m).padStart(2, "0");
 }
 function fmtNum(n, digits = 0) {
-  if (!isFinite(n)) return "—";
+  if (!isFinite(n)) return "n/a";
   return n.toLocaleString("en-US", { maximumFractionDigits: digits, minimumFractionDigits: digits });
 }
 
@@ -2104,7 +2104,7 @@ function findAirport(icao) {
 }
 
 /* ============================================================
-   COMPARE TAB — aircraft selector, side-by-side specs, refresh
+   COMPARE TAB: aircraft selector, side-by-side specs, refresh
 ============================================================ */
 
 function renderCompareSelector() {
@@ -2229,7 +2229,7 @@ function renderSideBySideSpecs() {
           const fullTotal = typicalBand(a).burn * 6.50 + a.mx_per_hour + a.engine_per_hour;
           return `<span class="mx-strike">${fmtMoney(fullTotal)}</span><span class="mx-disc">${fmtMoney(total)}</span>`;
         }],
-        ["Used market range", a => `${fmtMoneyShort(a.acquisition.low)} – ${fmtMoneyShort(a.acquisition.high)}`]
+        ["Used market range", a => `${fmtMoneyShort(a.acquisition.low)} to ${fmtMoneyShort(a.acquisition.high)}`]
       ]
     }
   ];
@@ -2464,7 +2464,7 @@ function renderCostChart() {
         <div class="cost-row above-ceiling">
           <div class="label">${d.a.name}</div>
           <div class="bar-container">above ceiling (FL${d.a.ceiling_fl})</div>
-          <div class="cost-value">—</div>
+          <div class="cost-value">n/a</div>
         </div>
       `;
     }
@@ -2590,7 +2590,7 @@ function renderCustomChart() {
   const fuelPrice = parseFloat(document.getElementById("custom-fuel").value) || 6.50;
   const mode = document.getElementById("custom-mode").value;
 
-  // Build list of (aircraft, altitude) bars — only for selected aircraft
+  // Build list of (aircraft, altitude) bars; only for selected aircraft
   const data = [];
   for (const a of AIRCRAFT) {
     if (!compareSelectedAircraft.has(a.id)) continue;
@@ -2767,7 +2767,7 @@ async function fetchTodayWinds() {
     return;
   }
   if (origin.icao === dest.icao) {
-    showWindStatus("Origin and destination are the same — can't compute a midpoint.", "error");
+    showWindStatus("Origin and destination are the same. Can't compute a midpoint.", "error");
     return;
   }
 
@@ -2953,7 +2953,7 @@ function calcTrip() {
   if (origin.rwy < minRwy) rwyWarnings.push(`${origin.icao} runway is ${fmtNum(origin.rwy)} ft (below ${fmtNum(minRwy)} ft minimum)`);
   if (dest.rwy < minRwy) rwyWarnings.push(`${dest.icao} runway is ${fmtNum(dest.rwy)} ft (below ${fmtNum(minRwy)} ft minimum)`);
 
-  // Per-aircraft computation — only for selected aircraft
+  // Per-aircraft computation; only for selected aircraft
   const results = AIRCRAFT.filter(a => selectedAircraft.has(a.id)).map(a => {
     const bands = a.altitude_bands.map(band => {
       const w = windForAltitude(band.fl);
@@ -3064,7 +3064,7 @@ function calcTrip() {
       const isChecked = r.selectedFLs.has(b.fl);
       const checkbox = `<label class="alt-row-check"><input type="checkbox" data-aircraft="${r.aircraft.id}" data-fl="${b.fl}" ${isChecked ? "checked" : ""} /> FL${b.fl}</label>${ceilingTag}`;
       if (b.infeasible) {
-        return `<tr class="${isChecked ? "" : "excluded"}"><td>${checkbox}</td><td colspan="6" style="color: var(--red); text-align:left;">Ground speed ≤ 0 — wind too strong</td></tr>`;
+        return `<tr class="${isChecked ? "" : "excluded"}"><td>${checkbox}</td><td colspan="6" style="color: var(--red); text-align:left;">Ground speed ≤ 0, wind too strong</td></tr>`;
       }
       const isBestTime = b.fl === r.bestTimeFL;
       const isBestCost = b.fl === r.bestCostFL;
@@ -3123,7 +3123,7 @@ function calcTrip() {
       return `
         <tr>
           <td>${a.name}<span class="cat-pill ${a.category}">${a.category}</span></td>
-          <td colspan="8" style="color: var(--muted); text-align: left;">No eligible altitudes — wind too strong or all unchecked</td>
+          <td colspan="8" style="color: var(--muted); text-align: left;">No eligible altitudes. Wind too strong or all unchecked</td>
         </tr>
       `;
     }
@@ -3148,7 +3148,7 @@ function calcTrip() {
 
   const summaryTable = `
     <div class="panel" style="margin-top: 18px;">
-      <h2 class="section-title">Side-by-Side — Best Time vs Best Cost</h2>
+      <h2 class="section-title">Side-by-Side: Best Time vs Best Cost</h2>
       <div class="table-wrap">
         <table class="trip-summary">
           <thead>

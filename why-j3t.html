@@ -25,6 +25,12 @@
 <meta name="twitter:description" content="Owner-first Part 91 aircraft management in Southwest Florida.">
 
 <!-- Fonts: async-loaded -->
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:image" content="https://j3taviation.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://j3taviation.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -204,10 +210,81 @@ footer{background:var(--charcoal);padding:64px 60px;border-top:1px solid rgba(16
   </div>
 </section>
 
+<!-- NO MANAGEMENT COMPANY: the unmanaged owner -->
+<div class="reveal" style="background:var(--cream);padding:96px 60px;">
+  <div style="max-width:880px;margin:0 auto;">
+    <p class="section-label">No management company?</p>
+    <h2 style="font-family:var(--serif);font-size:clamp(34px,4.6vw,56px);font-weight:300;color:var(--charcoal);line-height:1.12;margin-bottom:28px;">You have one. <em style="color:var(--gold);font-style:italic;">It is your captain.</em></h2>
+    <div style="width:48px;height:1px;background:var(--gold);margin-bottom:28px;"></div>
+    <p style="font-family:var(--serif);font-size:clamp(19px,2.1vw,24px);font-weight:300;line-height:1.8;color:#4A4A48;margin-bottom:18px;">Owners who skip the management layer do not escape the work. The records, the vendor relationships, the compliance calendar. All of it lands in the left seat, carried in one person's head.</p>
+    <p style="font-family:var(--serif);font-size:clamp(19px,2.1vw,24px);font-weight:300;line-height:1.8;color:#4A4A48;">And that person is two to three years from an airline class date. When he goes, it goes with him. J3T gives that work a permanent home before it walks out the door.</p>
+  </div>
+</div>
+
+<!-- THE MATH -->
+<section class="shortage reveal" style="padding-top:110px;padding-bottom:110px;">
+  <div class="shortage-inner">
+    <div class="shortage-rule-top"></div>
+    <p class="shortage-label">The Math</p>
+    <h2 class="shortage-title">The retainer pays for itself.</h2>
+    <p class="shortage-intro">The annual direct operating cost of a typical super midsize jet runs between $1.2M and $1.8M. We have seen management firms mark up those pass-through invoices by seven to fifteen percent. None of it appears on a statement called markup. All of it leaves the owner's account every year.</p>
+
+    <div class="shortage-stats">
+      <div>
+        <div class="shortage-stat-num">$1.5M</div>
+        <div class="shortage-stat-label">Typical annual direct<br>operating cost,<br>super midsize</div>
+      </div>
+      <div>
+        <div class="shortage-stat-num">7 to 15%</div>
+        <div class="shortage-stat-label">Vendor markups we have<br>seen on pass-through<br>invoices</div>
+      </div>
+      <div>
+        <div class="shortage-stat-num">$105K to $225K</div>
+        <div class="shortage-stat-label">Hidden margin leaving<br>the owner's account<br>each year</div>
+      </div>
+    </div>
+
+    <p class="shortage-body"><strong>The J3T retainer for a super midsize aircraft runs about $150K per year, all in.</strong> One number, scaled to aircraft and scope. Every vendor invoice passed at actual cost. No second revenue stream.</p>
+
+    <div class="shortage-divider"></div>
+    <p class="shortage-close">Owners typically recover the full retainer through pricing transparency alone. The discretion, the expertise, and the singular accountability are unbilled.</p>
+  </div>
+</section>
+
 <div class="quote-block reveal">
   <span class="quote-mark">&ldquo;</span>
   <p class="quote-text">We are not a management company that runs charter on the side. We are your advocate, exclusively.</p>
   <div class="quote-rule"></div>
+</div>
+
+<!-- THE OWNER'S BRIEF : lead magnet -->
+<div class="reveal" style="background:var(--warm-white);padding:96px 60px;">
+  <div style="max-width:680px;margin:0 auto;text-align:center;">
+    <p class="section-label" style="text-align:center;">The Owner's Brief</p>
+    <h2 style="font-family:var(--serif);font-size:clamp(32px,4.2vw,52px);font-weight:300;color:var(--charcoal);line-height:1.12;margin-bottom:22px;">The full case, <em style="color:var(--gold);font-style:italic;">in nine pages.</em></h2>
+    <p style="font-family:var(--serif);font-size:19px;font-weight:300;line-height:1.75;color:#4A4A48;margin-bottom:36px;">The premise, the math, both programs, and what the first thirty days look like. Request it below and it is yours.</p>
+    <form id="briefForm" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <input type="hidden" name="_subject" value="Owner's Brief request from why-j3t page">
+      <input type="email" name="email" required placeholder="Your email" style="flex:1;min-width:240px;max-width:340px;padding:15px 16px;border:1px solid var(--mist);background:#fff;font-family:var(--sans);font-size:14px;color:var(--charcoal);outline:none;">
+      <button type="submit" style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--warm-white);background:var(--gold);border:1px solid var(--gold);padding:15px 30px;cursor:pointer;">Request the brief</button>
+    </form>
+    <div id="briefReady" style="display:none;margin-top:28px;">
+      <p style="font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gold);margin-bottom:14px;">Your brief is ready.</p>
+      <a href="/owners-brief.pdf" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);text-decoration:none;padding:14px 28px;border:1px solid var(--gold);">Open the Owner's Brief</a>
+    </div>
+    <p style="font-family:var(--sans);font-size:11px;color:var(--stone);margin-top:20px;font-style:italic;">Your email is never shared. No follow-up sequences. No automated anything.</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="reveal" style="background:var(--charcoal);padding:96px 60px;text-align:center;">
+  <p class="section-label" style="text-align:center;">Get in touch</p>
+  <h2 style="font-family:var(--serif);font-size:clamp(30px,4vw,52px);font-weight:300;color:var(--warm-white);line-height:1.2;margin-bottom:18px;">We don't do sales calls.<br>We do <em style="color:var(--gold);font-style:italic;">honest conversations.</em></h2>
+  <p style="font-family:var(--serif);font-size:21px;font-style:italic;color:var(--stone);margin-bottom:44px;">If it's a fit, you'll know in fifteen minutes.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <a href="tel:+12397477983" style="font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--warm-white);text-decoration:none;padding:18px 40px;border:1px solid rgba(160,132,80,.5);cursor:none;">Call 239-747-7983</a>
+    <a href="sms:+12397477983?body=Hi%2C%20my%20tail%20number%20is%20%5BTAIL%5D.%20I%20am%20looking%20for%3A%20" style="font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:18px 40px;background:var(--gold);border:1px solid var(--gold);cursor:none;">Text Us</a>
+  </div>
 </div>
 
 <footer>
@@ -234,6 +311,23 @@ if(isFinePointer){
   document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
   (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
   document.querySelectorAll('a,button').forEach(function(el){el.addEventListener('mouseenter',function(){cursor.style.width='12px';cursor.style.height='12px';ring.style.width='48px';ring.style.height='48px';});el.addEventListener('mouseleave',function(){cursor.style.width='8px';cursor.style.height='8px';ring.style.width='32px';ring.style.height='32px';});});
+}
+var briefForm=document.getElementById('briefForm');
+if(briefForm){
+  briefForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=briefForm.querySelector('button');
+    btn.textContent='Sending…';btn.disabled=true;
+    fetch('https://formspree.io/f/mojpoqzp',{method:'POST',headers:{'Accept':'application/json'},body:new FormData(briefForm)})
+      .then(function(r){
+        briefForm.style.display='none';
+        document.getElementById('briefReady').style.display='block';
+      })
+      .catch(function(){
+        briefForm.style.display='none';
+        document.getElementById('briefReady').style.display='block';
+      });
+  });
 }
 </script>
 </body>

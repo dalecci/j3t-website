@@ -648,6 +648,54 @@ const LS_KEY = 'j3t-portal-state-v1';
 const SESSION_KEY = 'j3t-portal-session';
 const ADMIN_PASSWORD = '4545J3$';
 
+/* ============== J3T CLOUD (Supabase) ==============
+   Flight requests are the one thing that must leave the browser and reach the
+   office. They are written to a shared table so J3T sees them from any device. */
+const SB_URL = 'https://vlcpgwxeybpzwidjackz.supabase.co';
+const SB_KEY = 'sb_publishable_gtHRqI4H2q9VwyE7sG0BKA_qJSXkJMU';
+const SB_REQ_URL = SB_URL + '/rest/v1/j3t_flight_requests';
+function sbHeaders(extra){
+  return Object.assign({ 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, extra || {});
+}
+async function sbCreateRequest(row){
+  const res = await fetch(SB_REQ_URL, { method:'POST', headers: sbHeaders({'Prefer':'return=representation'}), body: JSON.stringify(row) });
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + (await res.text()));
+  return (await res.json())[0];
+}
+async function sbFetchRequests(){
+  const res = await fetch(SB_REQ_URL + '?select=*&order=created_at.desc&limit=200', { headers: sbHeaders() });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
+async function sbPatchRequest(id, patch){
+  const res = await fetch(SB_REQ_URL + '?id=eq.' + encodeURIComponent(id), { method:'PATCH', headers: sbHeaders({'Prefer':'return=representation'}), body: JSON.stringify(patch) });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return (await res.json())[0];
+}
+
+// Admin-side cache of incoming requests
+let sbRequests = null, sbRequestsErr = null, sbRequestsLoading = false;
+function loadSbRequests(force){
+  if (sbRequestsLoading) return;
+  if (sbRequests !== null && !force) return;
+  sbRequestsLoading = true;
+  sbFetchRequests()
+    .then(rows => { sbRequests = rows; sbRequestsErr = null; })
+    .catch(e => { sbRequestsErr = e.message || String(e); if (sbRequests === null) sbRequests = []; })
+    .finally(() => { sbRequestsLoading = false; render(); });
+}
+function pendingRequestCount(){ return (sbRequests || []).filter(r => r.status === 'requested').length; }
+function refreshRequests(){ sbRequests = null; loadSbRequests(true); toast('Refreshing…'); }
+async function setRequestStatus(id, status){
+  try{
+    await sbPatchRequest(id, { status, handled_at: new Date().toISOString(), handled_by: 'J3T' });
+    const r = (sbRequests||[]).find(x=>x.id===id);
+    if (r){ r.status = status; }
+    toast(status === 'confirmed' ? 'Marked confirmed' : 'Marked declined');
+    render();
+  }catch(e){ toast('Could not update: ' + (e.message||e)); }
+}
+
 /* Owner tabs that can be granted per user (order = sidebar order) */
 const TAB_META = [
   ['dashboard','Dashboard'],
@@ -881,8 +929,10 @@ function renderShell(session, path, parts){
   currentSeeMoney = currentUser ? (currentUser.see_money !== false) : true;
 
   // Sidebar links depend on role
+  if (effectiveRole === 'admin') loadSbRequests();
   const adminLinks = [
     ['admin', 'Clients', I.users],
+    ['admin/requests', 'Flight Requests', I.approve, pendingRequestCount()],
     ['admin/calendar', 'Master Calendar', I.cal],
     ['admin/flights', 'All Flights', I.plane],
     ['admin/crew', 'Crew', I.users],
@@ -958,6 +1008,7 @@ function renderView(role, path, parts, clientId){
     if (parts[0]==='admin' && parts[1]==='clients' && parts[2] && parts[3]==='users' && parts[4]) return adminUserForm(parts[2], parts[4]);
     if (parts[0]==='admin' && parts[1]==='clients' && parts[2] && parts[3]==='users') return adminClientUsers(parts[2]);
     if (parts[0]==='admin' && parts[1]==='clients' && parts[2]) return adminClientForm(parts[2]);
+    if (path === 'admin/requests') return adminFlightRequests();
     if (path === 'admin/calendar') return adminMasterCalendar();
     if (path === 'admin/flights') return adminAllFlights();
     if (path === 'admin/flights/new') return adminFlightEdit(null);
@@ -1704,6 +1755,79 @@ function ownerSavings(clientId){
 
       <div style="margin-top:8px;padding:18px;background:var(--cream);border-left:3px solid var(--gold);font-family:var(--serif);font-style:italic;color:var(--ash);">
         A management company that marks up your invoices cannot show you this page. It would expose their own margin. J3T can, because we do not have one.
+      </div>
+    </div>`;
+}
+
+/* ============== ADMIN: INCOMING FLIGHT REQUESTS ============== */
+function reqRow(r, showActions){
+  const when = r.created_at ? new Date(r.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+  const pillCls = r.status==='confirmed' ? 'paid' : (r.status==='declined' ? 'cancelled' : 'requested');
+  return raw`
+    <tr>
+      <td>
+        <div style="font-family:var(--serif);font-size:16px;color:var(--charcoal);">${h`${r.dep_airport||'?'}`} &rarr; ${h`${r.arr_airport||'?'}`}</div>
+        <div style="font-size:11px;color:var(--ash);margin-top:2px;">${h`${r.dep_date||'date TBD'}`}${r.dep_time?' · '+h`${r.dep_time}`:''}</div>
+      </td>
+      <td>
+        <div style="font-family:var(--serif);font-size:15px;color:var(--charcoal);">${h`${r.client_name||r.client_id||''}`}</div>
+        <div style="font-size:11px;color:var(--ash);margin-top:2px;">${h`${r.aircraft_tail||''}`}${r.requested_by?' · by '+h`${r.requested_by}`:''}</div>
+      </td>
+      <td>
+        ${r.pax_count?raw`<div style="font-size:13px;">${r.pax_count} pax${r.pax_primary?' · '+h`${r.pax_primary}`:''}</div>`:''}
+        ${r.catering?raw`<div style="font-size:11px;color:var(--ash);">Catering: ${h`${r.catering}`}</div>`:''}
+        ${r.ground?raw`<div style="font-size:11px;color:var(--ash);">Ground: ${h`${r.ground}`}</div>`:''}
+        ${r.notes?raw`<div style="font-size:11px;color:var(--ash);font-style:italic;margin-top:3px;">${h`${r.notes}`}</div>`:''}
+      </td>
+      <td style="white-space:nowrap;font-size:11px;color:var(--ash);">${h`${when}`}</td>
+      <td><span class="pill ${pillCls}">${h`${r.status}`}</span></td>
+      ${showActions ? raw`<td style="white-space:nowrap;">
+        <button class="btn primary sm" onclick="setRequestStatus('${r.id}','confirmed')">Confirm</button>
+        <button class="btn ghost sm" onclick="setRequestStatus('${r.id}','declined')">Decline</button>
+      </td>` : raw`<td></td>`}
+    </tr>`;
+}
+
+function adminFlightRequests(){
+  loadSbRequests();
+  const rows = sbRequests || [];
+  const pending = rows.filter(r=>r.status==='requested');
+  const handled = rows.filter(r=>r.status!=='requested');
+  const loading = sbRequestsLoading && sbRequests === null;
+
+  return raw`
+    ${topbar('Flight Requests', pending.length ? pending.length + ' awaiting your response' : 'Nothing awaiting response')}
+    <div class="view">
+      ${sbRequestsErr ? raw`
+        <div style="padding:16px;background:rgba(198,93,79,.08);border-left:3px solid var(--red);margin-bottom:20px;">
+          <strong style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red);">Could not reach the request inbox</strong>
+          <div style="font-family:var(--serif);font-style:italic;color:var(--ash);margin-top:6px;">${h`${sbRequestsErr}`}</div>
+        </div>` : ''}
+
+      <div class="section">
+        <div class="section-head">
+          <h2 class="section-title">Awaiting <em>response</em></h2>
+          <span class="section-link" onclick="refreshRequests()" style="cursor:pointer;">Refresh &#8635;</span>
+        </div>
+        ${loading ? raw`<div class="empty"><h3>Loading…</h3><p>Checking for incoming requests.</p></div>`
+        : pending.length ? raw`
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Route</th><th>Owner</th><th>Details</th><th>Received</th><th>Status</th><th></th></tr></thead>
+          <tbody>${pending.map(r=>reqRow(r,true)).join('')}</tbody>
+        </table></div>` : raw`<div class="empty"><h3>All clear</h3><p>No flight requests waiting on you.</p></div>`}
+      </div>
+
+      ${handled.length ? raw`
+      <div class="section">
+        <div class="section-head"><h2 class="section-title">Already <em>handled</em></h2></div>
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Route</th><th>Owner</th><th>Details</th><th>Received</th><th>Status</th><th></th></tr></thead>
+          <tbody>${handled.map(r=>reqRow(r,false)).join('')}</tbody>
+        </table></div>
+      </div>` : ''}
+
+      <div style="margin-top:8px;padding:18px;background:var(--cream);border-left:3px solid var(--gold);font-family:var(--serif);font-style:italic;color:var(--ash);">
+        Requests submitted by any owner land here from any device. This inbox is the shared record, not a copy stored in one browser.
       </div>
     </div>`;
 }
@@ -3174,6 +3298,35 @@ function attachViewHandlers(session, path, parts){
         read: false
       });
       saveState();
+
+      // Send it to J3T so it actually leaves this browser and reaches the office
+      const reqClient = state.clients.find(c=>c.id===clientId);
+      const reqUser = resolveUser(session);
+      const nn = v => (v === '' || v === undefined) ? null : v;
+      sbCreateRequest({
+        client_id: clientId,
+        client_name: reqClient ? reqClient.name : null,
+        aircraft_tail: (reqClient && reqClient.aircraft) ? reqClient.aircraft.tail : null,
+        requested_by: reqUser ? reqUser.name : (session.role === 'admin' ? 'J3T Administrator' : null),
+        requested_by_email: reqUser ? nn(reqUser.email) : null,
+        dep_airport: newFlight.departure.airport,
+        dep_name: nn(newFlight.departure.name),
+        dep_date: nn(newFlight.departure.date),
+        dep_time: nn(newFlight.departure.time),
+        arr_airport: newFlight.arrival.airport,
+        arr_name: nn(newFlight.arrival.name),
+        arr_date: nn(newFlight.arrival.date),
+        arr_time: nn(newFlight.arrival.time),
+        pax_count: isNaN(newFlight.passengers.count) ? null : newFlight.passengers.count,
+        pax_primary: nn(newFlight.passengers.primary),
+        captain: newFlight.crew.pic,
+        catering: nn(newFlight.catering),
+        ground: nn(newFlight.ground),
+        notes: nn(newFlight.notes)
+      })
+        .then(() => { sbRequests = null; toast('Flight request sent to J3T'); })
+        .catch(err => { console.error('flight request sync failed', err); toast('Saved to your portal, but J3T could not be reached. Please call to confirm.'); });
+
       toast('Flight request submitted');
       location.hash = '#calendar';
     });

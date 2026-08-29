@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Parfumier · Concept 2 · La Galerie</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="https://leparfumier.com/cdn/shop/files/Group_9862.png?v=1761945327&width=64">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafafa;
+  --tile:#e7e9eb;
+  --tile2:#dee1e4;
+  --tile3:#d4d8db;
+  --ink:#101214;
+  --gray:#7c8288;
+  --line:#e2e2e2;
+  --blue:#2733e0;
+  --sans:'Archivo','Helvetica Neue',Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1360px;margin:0 auto;padding:0 24px}
+.cap{text-transform:uppercase;letter-spacing:.14em}
+.cap-s{font-size:10px;text-transform:uppercase;letter-spacing:.18em}
+body.locked{overflow:hidden}
+
+/* ── gate ── */
+.gate{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px}
+.gate.off{display:none}
+.gate-in{text-align:center;max-width:340px;width:100%}
+.gate-in .t1{font-size:19px;font-weight:600;letter-spacing:.32em;text-transform:uppercase}
+.gate-in .t2{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);margin:14px 0 44px}
+.gate-in input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--ink);font-family:var(--sans);font-size:26px;letter-spacing:.7em;text-align:center;padding:8px 0 12px;outline:none;color:var(--ink)}
+.gate-in button{margin-top:34px;width:100%;background:var(--ink);color:#fff;border:none;font-family:var(--sans);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;padding:15px;cursor:pointer;transition:background .2s}
+.gate-in button:hover{background:var(--blue)}
+.gate-in .err{color:var(--blue);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-top:16px;visibility:hidden}
+.gate-in.no .err{visibility:visible}
+.gate-in.no{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ── topbar ── */
+.topbar{background:var(--ink);color:#fff;text-align:center;padding:8px 16px}
+.topbar span{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase}
+
+/* ── header ── */
+header{background:rgba(250,250,250,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:62px;gap:16px}
+.links{display:flex;gap:22px}
+.links a{font-size:10px;letter-spacing:.18em;text-transform:uppercase;position:relative;padding:4px 0}
+.links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--ink);transition:width .3s}
+.links a:hover::after{width:100%}
+.links a.sale{color:var(--blue)}
+.brand{font-size:19px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;white-space:nowrap;text-align:center}
+.hright{display:flex;gap:20px;justify-content:flex-end;align-items:center}
+.hright a,.hright button{font-family:var(--sans);font-size:10px;letter-spacing:.18em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--ink)}
+.hright a:hover,.hright button:hover{color:var(--blue)}
+.burger{display:none}
+.mmenu{display:none;border-top:1px solid var(--line);background:var(--bg);padding:8px 24px 16px}
+.mmenu.open{display:block}
+.mmenu a{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:11px 0;border-bottom:1px solid var(--line)}
+
+/* ── hero split ── */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px}
+.htile{position:relative;min-height:74vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.htile.a{background:linear-gradient(160deg,#e9ebed,#dcdfe2)}
+.htile.b{background:linear-gradient(200deg,#e4e7e9,#d5d9dc)}
+.htile img{max-height:56vh;width:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .8s ease}
+.htile:hover img{transform:scale(1.04)}
+.htile .txt{position:absolute;left:36px;bottom:32px}
+.htile .txt .eb{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gray)}
+.htile .txt .tt{font-size:22px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin:8px 0 12px}
+.htile .txt .lk{font-size:10px;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:3px}
+.htile:hover .txt .lk{color:var(--blue);border-color:var(--blue)}
+.htile .price{position:absolute;top:26px;right:30px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray)}
+
+/* stat strip */
+.stats{border-bottom:1px solid var(--line);padding:16px 24px;text-align:center}
+.stats span{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);padding:0 16px}
+
+/* ── 4 tiles ── */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px}
+.tile{position:relative;display:block}
+.tile .im{background:var(--tile);aspect-ratio:1/1.15;display:flex;align-items:center;justify-content:center;padding:26px;overflow:hidden}
+.tile:nth-child(2) .im{background:var(--tile2)}
+.tile:nth-child(3) .im{background:var(--tile3)}
+.tile:nth-child(4) .im{background:#c9ced2}
+.tile .im img{max-height:82%;width:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .6s ease}
+.tile:hover .im img{transform:scale(1.06)}
+.tile .lb{padding:14px 4px 26px}
+.tile .lb .eb{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray)}
+.tile .lb .tt{font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.tile:hover .lb .tt{color:var(--blue)}
+.tile .cnt{position:absolute;top:14px;left:14px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray)}
+
+/* ── sections ── */
+.sec{padding:80px 0}
+.sec-head{text-align:center;margin-bottom:46px}
+.sec-head .eb{font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gray)}
+.sec-head h2{font-size:clamp(20px,2.4vw,28px);font-weight:600;letter-spacing:.24em;text-transform:uppercase;margin-top:10px}
+
+/* product grid */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:34px 22px}
+.pc{text-align:center;position:relative}
+.pc .im{background:var(--tile);aspect-ratio:1/1.2;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;transition:background .3s}
+.pc:hover .im{background:var(--tile2)}
+.pc .im img{max-height:88%;width:auto;object-fit:contain;mix-blend-mode:multiply;transition:transform .5s ease}
+.pc:hover .im img{transform:scale(1.05)}
+.pc .buy{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:#fff;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;padding:11px;opacity:0;transform:translateY(100%);transition:all .3s ease}
+.pc:hover .buy{opacity:1;transform:none}
+.pc .promo{position:absolute;top:12px;left:12px;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)}
+.pc .v{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);margin-top:14px}
+.pc .t{font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin:5px 0 6px;line-height:1.5}
+.pc .pr{font-size:11px;letter-spacing:.08em}
+.pc .pr .was{color:var(--gray);text-decoration:line-through;margin-left:8px;font-size:10px}
+.pc .pr .cur{color:var(--gray);font-size:8.5px;letter-spacing:.12em;margin-left:5px}
+
+/* statement */
+.statement{background:var(--tile);padding:110px 24px;text-align:center}
+.statement .big{font-size:clamp(20px,3.2vw,36px);font-weight:600;letter-spacing:.18em;text-transform:uppercase;line-height:1.5;max-width:1000px;margin:0 auto}
+.statement .big em{font-style:normal;color:var(--blue)}
+.statement .lk{display:inline-block;margin-top:34px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:4px}
+.statement .lk:hover{color:var(--blue);border-color:var(--blue)}
+
+/* services */
+.serv{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sv{padding:36px 28px;text-align:center;border-right:1px solid var(--line)}
+.sv:last-child{border-right:none}
+.sv .k{font-size:10.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
+.sv .d{font-size:11px;color:var(--gray);margin-top:8px}
+.sv a{color:var(--blue)}
+
+/* newsletter */
+.news{padding:90px 24px;text-align:center}
+.news .eb{font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gray)}
+.news h2{font-size:clamp(18px,2.2vw,25px);font-weight:600;letter-spacing:.26em;text-transform:uppercase;margin:12px 0 34px}
+.news form{display:flex;max-width:430px;margin:0 auto;gap:0}
+.news input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--ink);font-family:var(--sans);font-size:12px;letter-spacing:.06em;padding:11px 2px;outline:none}
+.news button{background:var(--ink);color:#fff;border:none;font-family:var(--sans);font-size:10px;letter-spacing:.22em;text-transform:uppercase;padding:0 26px;cursor:pointer;transition:background .2s}
+.news button:hover{background:var(--blue)}
+.news .done{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);display:none}
+
+/* giant wordmark */
+.giant{overflow:hidden;padding:20px 0 0;border-top:1px solid var(--line)}
+.giant div{font-weight:700;font-size:9.2vw;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;text-align:center;line-height:.95;color:var(--ink)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:56px 0 30px;margin-top:24px}
+.f-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:36px;margin-bottom:48px}
+.f-col .h{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gray);margin-bottom:16px}
+.f-col a{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 0}
+.f-col a:hover{color:var(--blue)}
+.f-bot{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+.f-bot a:hover{color:var(--blue)}
+
+/* responsive */
+@media(max-width:1024px){
+  .links{display:none}
+  .nav{grid-template-columns:auto 1fr auto}
+  .brand{text-align:left}
+  .burger{display:block}
+  .hero{grid-template-columns:1fr}
+  .htile{min-height:54vh}
+  .tiles{grid-template-columns:1fr 1fr}
+  .pgrid{grid-template-columns:1fr 1fr}
+  .serv{grid-template-columns:1fr}
+  .sv{border-right:none;border-bottom:1px solid var(--line)}
+  .sv:last-child{border-bottom:none}
+  .f-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .brand{font-size:14px;letter-spacing:.22em}
+  .tiles{grid-template-columns:1fr 1fr;gap:2px}
+  .pgrid{gap:26px 12px}
+  .htile .txt{left:20px;bottom:20px}
+  .news form{flex-direction:column;gap:14px}
+  .news button{padding:14px}
+  .f-grid{grid-template-columns:1fr 1fr;gap:26px}
+}
+</style>
+</head>
+<body class="locked">
+
+<!-- gate -->
+<div class="gate" id="gate">
+  <div class="gate-in" id="gateCard">
+    <div class="t1">Le Parfumier</div>
+    <div class="t2" data-en="Private access &middot; enter code">Accès privé &middot; entrez le code</div>
+    <input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Code">
+    <button id="pinBtn" data-en="Enter">Entrer</button>
+    <div class="err" data-en="Wrong code">Code incorrect</div>
+  </div>
+</div>
+
+<!-- topbar -->
+<div class="topbar"><span data-en="Free shipping Canada + United States with minimum purchase">Livraison gratuite Canada + États-Unis avec minimum d'achat</span></div>
+
+<!-- header -->
+<header>
+  <div class="wrap nav">
+    <nav class="links">
+      <a href="https://leparfumier.com/collections/femmes" data-en="Women">Femmes</a>
+      <a href="https://leparfumier.com/collections/hommes" data-en="Men">Hommes</a>
+      <a href="https://leparfumier.com/collections/parfums-vintage-et-rares" data-en="Vintage + Rare">Vintage + Rares</a>
+      <a class="sale" href="https://leparfumier.com/collections/soldes" data-en="Sale">Soldes</a>
+    </nav>
+    <button class="burger hright" id="burger" style="border:1px solid var(--line);padding:6px 12px">Menu</button>
+    <a class="brand" href="https://leparfumier.com">Le Parfumier</a>
+    <div class="hright">
+      <button id="langBtn">EN</button>
+      <a href="https://leparfumier.com/search" data-en="Search">Recherche</a>
+      <a href="https://leparfumier.com/cart" data-en="Cart">Panier</a>
+    </div>
+  </div>
+  <div class="mmenu" id="mmenu">
+    <a href="https://leparfumier.com/collections/femmes" data-en="Women">Femmes</a>
+    <a href="https://leparfumier.com/collections/hommes" data-en="Men">Hommes</a>
+    <a href="https://leparfumier.com/collections/parfums-vintage-et-rares" data-en="Vintage + Rare">Vintage + Rares</a>
+    <a href="https://leparfumier.com/collections/soldes" style="color:var(--blue)" data-en="Sale">Soldes</a>
+  </div>
+</header>
+
+<!-- hero split -->
+<section class="hero">
+  <a class="htile a" href="https://leparfumier.com/collections/femmes">
+    <img src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/cqt194qgwxdibh6pxqcn_c6f66db0-d95c-45e8-ae41-5257fd9f4a51.jpg?v=1758238025&width=800" alt="Versace Bright Crystal" loading="eager">
+    <span class="price" data-en="Bright Crystal &middot; $56 CAD">Bright Crystal &middot; 56 $ CAD</span>
+    <div class="txt">
+      <div class="eb" data-en="For her">Pour elle</div>
+      <div class="tt" data-en="2,649 fragrances">2 649 parfums</div>
+      <span class="lk" data-en="Shop women">Magasiner femmes</span>
+    </div>
+  </a>
+  <a class="htile b" href="https://leparfumier.com/collections/hommes">
+    <img src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/j2pbch4dooqdsi5hxgqm_65e6bebc-ff35-4366-b7d7-f5b4b50bbaf2.jpg?v=1758228105&width=800" alt="Creed Aventus" loading="eager">
+    <span class="price" data-en="Aventus &middot; $323 CAD">Aventus &middot; 323 $ CAD</span>
+    <div class="txt">
+      <div class="eb" data-en="For him">Pour lui</div>
+      <div class="tt" data-en="1,373 fragrances">1 373 parfums</div>
+      <span class="lk" data-en="Shop men">Magasiner hommes</span>
+    </div>
+  </a>
+</section>
+
+<!-- stats -->
+<div class="stats">
+  <span data-en="4,825 fragrances">4 825 parfums</span>
+  <span data-en="377 houses">377 maisons</span>
+  <span data-en="100% authentic">100 % authentique</span>
+  <span data-en="Laval &middot; Quebec">Laval &middot; Québec</span>
+</div>
+
+<!-- 4 tiles -->
+<section class="tiles">
+  <a class="tile" href="https://leparfumier.com/collections/parfums-vintage-et-rares">
+    <span class="cnt">947</span>
+    <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/Roger_Gallet_LHomme_Pour_Homme_Eau_de_Toilette_Vintage_-_100_ml_34_oz_703730aacf7261c6.webp?v=1780417756&width=500" alt="Vintage et rares"></div>
+    <div class="lb"><div class="eb">Collection</div><div class="tt" data-en="Vintage + Rare">Vintage + Rares</div></div>
+  </a>
+  <a class="tile" href="https://leparfumier.com/collections/creed">
+    <span class="cnt">Creed</span>
+    <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/fisdsrionxrgxbib73ju_a279e3d9-e14c-4a5e-950a-914d737f0825.jpg?v=1776799302&width=500" alt="Haute parfumerie"></div>
+    <div class="lb"><div class="eb" data-en="Selection">Sélection</div><div class="tt" data-en="High perfumery">Haute parfumerie</div></div>
+  </a>
+  <a class="tile" href="https://leparfumier.com/collections/articles-populaires">
+    <span class="cnt" data-en="Icons">Icônes</span>
+    <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/erba-pura-100ml.webp?v=1778017573&width=500" alt="Meilleurs vendeurs"></div>
+    <div class="lb"><div class="eb" data-en="The essentials">Les essentiels</div><div class="tt" data-en="Best sellers">Meilleurs vendeurs</div></div>
+  </a>
+  <a class="tile" href="https://leparfumier.com/collections/soldes">
+    <span class="cnt">2 033</span>
+    <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/mhuk8af4ryi4hifoersq_51c8fb3d-81c3-4de5-9f94-f37368838572.jpg?v=1758236283&width=500" alt="Soldes"></div>
+    <div class="lb"><div class="eb" data-en="Up to 50% off">Jusqu'à 50 %</div><div class="tt" data-en="Summer sale">Soldes d'été</div></div>
+  </a>
+</section>
+
+<!-- best sellers -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eb" data-en="The most wanted">Les plus recherchés</div>
+      <h2 data-en="Icons">Icônes</h2>
+    </div>
+    <div class="pgrid">
+
+      <a class="pc" href="https://leparfumier.com/products/creed-aventus-pour-homme-eau-de-parfum">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/j2pbch4dooqdsi5hxgqm_65e6bebc-ff35-4366-b7d7-f5b4b50bbaf2.jpg?v=1758228105&width=500" alt="Creed Aventus"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Creed</div><div class="t">Aventus</div>
+        <div class="pr"><span data-en="$323">323 $</span><span class="was" data-en="$353">353 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/versace-bright-crystal-pour-femme-eau-de-toilette">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/cqt194qgwxdibh6pxqcn_c6f66db0-d95c-45e8-ae41-5257fd9f4a51.jpg?v=1758238025&width=500" alt="Versace Bright Crystal"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Versace</div><div class="t">Bright Crystal</div>
+        <div class="pr"><span data-en="$56">56 $</span><span class="was" data-en="$72">72 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/xerjoff-erba-pura-eau-de-parfum">
+        <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/erba-pura-100ml.webp?v=1778017573&width=500" alt="Xerjoff Erba Pura"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Xerjoff</div><div class="t">Erba Pura</div>
+        <div class="pr"><span data-en="$177">177 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/ralph-lauren-big-pony-2-pour-femme-eau-de-toilette">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/mhuk8af4ryi4hifoersq_51c8fb3d-81c3-4de5-9f94-f37368838572.jpg?v=1758236283&width=500" alt="Ralph Lauren Big Pony 2"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Ralph Lauren</div><div class="t">Big Pony 2</div>
+        <div class="pr"><span data-en="$36">36 $</span><span class="was" data-en="$78">78 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/ortona-afrodite-uomo-pour-homme-eau-de-parfum">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/Ortona_Afrodite_Uomo_Pour_Homme_Eau_de_Parfum_-_100_ml_34_oz_f9cd02ecf3d6152f.webp?v=1780417754&width=500" alt="Ortona Afrodite Uomo"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Ortona</div><div class="t">Afrodite Uomo</div>
+        <div class="pr"><span data-en="$70">70 $</span><span class="was" data-en="$92">92 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/masone-greed-pour-homme-eau-de-parfum">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/greed100ml.png?v=1784410226&width=500" alt="Masone Greed"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Masone</div><div class="t">Greed</div>
+        <div class="pr"><span data-en="$56">56 $</span><span class="was" data-en="$73">73 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/ortona-afrodite-donna-pour-femme-eau-de-parfum">
+        <div class="im"><span class="promo">Promotion</span><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/Ortona_Afrodite_Donna_Pour_Femme_Eau_de_Parfum_-_100_ml_34_oz_99c70fa171c0ddc8.webp?v=1780418842&width=500" alt="Ortona Afrodite Donna"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Ortona</div><div class="t">Afrodite Donna</div>
+        <div class="pr"><span data-en="$70">70 $</span><span class="was" data-en="$92">92 $</span><span class="cur">CAD</span></div>
+      </a>
+
+      <a class="pc" href="https://leparfumier.com/products/xerjoff-1861-naxos-eau-de-parfum">
+        <div class="im"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0661/0049/4406/files/Xerjoff_1861_Naxos_Eau_De_Parfum.jpg?v=1784041053&width=500" alt="Xerjoff 1861 Naxos"><span class="buy" data-en="Shop">Acheter</span></div>
+        <div class="v">Xerjoff</div><div class="t">1861 Naxos</div>
+        <div class="pr"><span data-en="$235">235 $</span><span class="cur">CAD</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- statement -->
+<section class="statement">
+  <div class="big" data-en="&lt;em&gt;947 fragrances&lt;/em&gt; the houses no longer produce. Here, still."><em>947 parfums</em> que les maisons ne produisent plus. Ici, encore.</div>
+  <a class="lk" href="https://leparfumier.com/collections/parfums-vintage-et-rares" data-en="The vintage + rare collection">La collection vintage + rares</a>
+</section>
+
+<!-- services -->
+<section class="serv">
+  <div class="sv"><div class="k" data-en="Free shipping">Livraison gratuite</div><div class="d" data-en="Canada + United States, with minimum purchase">Canada + États-Unis, avec minimum d'achat</div></div>
+  <div class="sv"><div class="k" data-en="Guaranteed authentic">Authenticité garantie</div><div class="d" data-en="Every bottle verified, 377 houses">Chaque flacon vérifié, 377 maisons</div></div>
+  <div class="sv"><div class="k" data-en="Rewards">Récompenses</div><div class="d" data-en="Points on every order. &lt;a href='https://leparfumier.com/pages/le-parfumier-rewards'&gt;Join&lt;/a&gt;">Des points sur chaque commande. <a href="https://leparfumier.com/pages/le-parfumier-rewards">Adhérer</a></div></div>
+</section>
+
+<!-- newsletter -->
+<section class="news">
+  <div class="eb" data-en="Stay informed">Restez informé</div>
+  <h2 data-en="Rare arrivals first">Les raretés en premier</h2>
+  <form id="nlForm">
+    <input type="email" required placeholder="Votre adresse courriel" data-en-placeholder="Your email address" aria-label="Courriel">
+    <button type="submit" data-en="Sign up">S'inscrire</button>
+  </form>
+  <div class="done" id="nlDone" data-en="Thank you">Merci</div>
+</section>
+
+<!-- giant wordmark -->
+<div class="giant"><div>Le Parfumier</div></div>
+
+<!-- footer -->
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-col">
+        <div class="h" data-en="Shop">Magasiner</div>
+        <a href="https://leparfumier.com/collections/femmes" data-en="Women">Femmes</a>
+        <a href="https://leparfumier.com/collections/hommes" data-en="Men">Hommes</a>
+        <a href="https://leparfumier.com/collections/enfants" data-en="Kids">Enfants</a>
+        <a href="https://leparfumier.com/collections/soins-de-la-peau" data-en="Skincare">Soins de la peau</a>
+        <a href="https://leparfumier.com/collections/soldes" data-en="Sale">Soldes</a>
+      </div>
+      <div class="f-col">
+        <div class="h" data-en="The house">La maison</div>
+        <a href="https://leparfumier.com/pages/about" data-en="About">À propos</a>
+        <a href="https://leparfumier.com/pages/contact">Contact</a>
+        <a href="https://leparfumier.com/pages/store-locator" data-en="Stores">Boutiques</a>
+        <a href="https://leparfumier.com/pages/le-parfumier-rewards" data-en="Rewards">Récompenses</a>
+      </div>
+      <div class="f-col">
+        <div class="h" data-en="Policies">Politiques</div>
+        <a href="https://leparfumier.com/policies/shipping-policy" data-en="Shipping">Livraison</a>
+        <a href="https://leparfumier.com/policies/refund-policy" data-en="Returns">Retours</a>
+        <a href="https://leparfumier.com/policies/privacy-policy" data-en="Privacy">Confidentialité</a>
+        <a href="https://leparfumier.com/policies/terms-of-service" data-en="Terms">Conditions</a>
+      </div>
+      <div class="f-col">
+        <div class="h" data-en="Follow us">Suivez nous</div>
+        <a href="https://www.instagram.com/leparfumier/">Instagram</a>
+        <a href="https://www.tiktok.com/@leparfumier">TikTok</a>
+        <a href="https://www.facebook.com/leparfumier/">Facebook</a>
+        <a href="https://www.youtube.com/@leparfumier8390">YouTube</a>
+        <a href="https://www.pinterest.com/leparfumierperfumes/">Pinterest</a>
+      </div>
+    </div>
+    <div class="f-bot">
+      <span>2065 Autoroute 440 Ouest, Laval QC &middot; 450 687 5454 &middot; info@leparfumier.com</span>
+      <span data-en="&copy; 2026 Le Parfumier">&copy; 2026 Le Parfumier</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // gate
+  var gate=document.getElementById('gate'),card=document.getElementById('gateCard'),pin=document.getElementById('pin');
+  function unlock(){gate.classList.add('off');document.body.classList.remove('locked')}
+  try{if(sessionStorage.getItem('lp_code')==='4545')unlock();}catch(e){}
+  function tryPin(){
+    if(pin.value==='4545'){try{sessionStorage.setItem('lp_code','4545')}catch(e){};unlock();}
+    else{card.classList.remove('no');void card.offsetWidth;card.classList.add('no');pin.value='';pin.focus();}
+  }
+  document.getElementById('pinBtn').addEventListener('click',tryPin);
+  pin.addEventListener('keydown',function(e){if(e.key==='Enter')tryPin()});
+  pin.addEventListener('input',function(){if(pin.value.length===4)tryPin()});
+  if(!gate.classList.contains('off'))pin.focus();
+
+  // mobile menu
+  var mm=document.getElementById('mmenu');
+  document.getElementById('burger').addEventListener('click',function(){mm.classList.toggle('open')});
+
+  // newsletter demo
+  document.getElementById('nlForm').addEventListener('submit',function(e){e.preventDefault();this.style.display='none';document.getElementById('nlDone').style.display='block'});
+
+  // fr / en
+  var lang='fr',btn=document.getElementById('langBtn');
+  document.querySelectorAll('[data-en]').forEach(function(el){el.setAttribute('data-fr',el.innerHTML)});
+  var ph=document.querySelector('[data-en-placeholder]');
+  if(ph)ph.setAttribute('data-fr-placeholder',ph.getAttribute('placeholder'));
+  btn.addEventListener('click',function(){
+    lang=(lang==='fr')?'en':'fr';
+    document.documentElement.lang=lang;
+    btn.textContent=(lang==='fr')?'EN':'FR';
+    document.querySelectorAll('[data-en]').forEach(function(el){el.innerHTML=el.getAttribute(lang==='en'?'data-en':'data-fr')});
+    if(ph)ph.setAttribute('placeholder',ph.getAttribute(lang==='en'?'data-en-placeholder':'data-fr-placeholder'));
+  });
+})();
+</script>
+</body>
+</html>

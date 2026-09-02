@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Archivo',Arial,sans-serif;background:#f4f3f0;color:#141414;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
 a{color:inherit;text-decoration:none}
-.box{max-width:760px;width:100%;text-align:center}
+.box{max-width:1020px;width:100%;text-align:center}
 .t1{font-size:20px;font-weight:600;letter-spacing:.3em;text-transform:uppercase}
 .t2{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8a8a86;margin:12px 0 48px}
 .gate input{background:transparent;border:none;border-bottom:1px solid #141414;font-family:'IBM Plex Mono',monospace;font-size:26px;letter-spacing:.7em;text-align:center;padding:8px 0 12px;outline:none;width:240px;color:#141414}
@@ -22,7 +22,7 @@ a{color:inherit;text-decoration:none}
 .gate.no .err{visibility:visible}
 .gate.no{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.choices{display:none;grid-template-columns:1fr 1fr;gap:18px;text-align:left}
+.choices{display:none;grid-template-columns:1fr 1fr 1fr;gap:18px;text-align:left}
 .choices.on{display:grid}
 .ch{border:1px solid #141414;padding:34px 30px;transition:all .2s;background:#fff;position:relative}
 .ch:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 rgba(20,20,20,.18)}
@@ -32,7 +32,10 @@ a{color:inherit;text-decoration:none}
 .ch .go{display:inline-block;margin-top:18px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;border-bottom:1px solid #141414;padding-bottom:3px}
 .ch.c1{background:#ede6d6;font-family:'IBM Plex Mono',monospace}
 .ch.c1 .nm{font-family:'Archivo',sans-serif}
-@media(max-width:640px){.choices{grid-template-columns:1fr}}
+.ch.c3{background:#fdfaf5}
+.ch.c3 .nm{font-family:Didot,'Bodoni MT','Times New Roman',serif;font-weight:600;letter-spacing:.04em}
+.ch.c3 .go{border-color:#b3001b;color:#b3001b}
+@media(max-width:900px){.choices{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -57,6 +60,12 @@ a{color:inherit;text-decoration:none}
       <div class="no">Concept 02</div>
       <div class="nm">La Galerie</div>
       <div class="ds">Gris porcelaine, typographie espacée, grandes tuiles épurées. Esprit galerie contemporaine.</div>
+      <span class="go">Voir le concept</span>
+    </a>
+    <a class="ch c3" href="3/">
+      <div class="no">Concept 03</div>
+      <div class="nm">L'Éditorial</div>
+      <div class="ds">Ivoire, rose poudré et rouge lipstick. Grandes manchettes de magazine mode, esprit édition été.</div>
       <span class="go">Voir le concept</span>
     </a>
   </div>
